@@ -1,7 +1,8 @@
 .hud {
   position: fixed;
+  /* default below a typical top-left chat; overridden by config/client.lua missionHud */
   left: 24px;
-  top: 82px;
+  top: 46vh;
   width: 410px;
   z-index: 20;
   color: #fff;
@@ -180,8 +181,6 @@
 
 @media (max-width: 900px) {
   .hud {
-    left: 15px;
-    top: 65px;
     width: 330px;
   }
   .hint {

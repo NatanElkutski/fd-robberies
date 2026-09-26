@@ -53,7 +53,9 @@ export function useNuiSync(): void {
   useNuiEvent('dataRefresh', (msg) => dispatch({ type: 'refresh', data: normalizeData(msg.data), nearby: asArray(msg.nearby) }));
   useNuiEvent('nearby', (msg) => dispatch({ type: 'nearby', nearby: asArray(msg.nearby) }));
   useNuiEvent('lobbyMessage', (msg) => dispatch({ type: 'chatMessage', message: msg.message }));
-  useNuiEvent('mission', (msg) => dispatch({ type: 'mission', show: msg.show, label: msg.label, briefing: asArray<string>(msg.briefing) }));
+  useNuiEvent('mission', (msg) =>
+    dispatch({ type: 'mission', show: msg.show, label: msg.label, briefing: asArray<string>(msg.briefing), position: msg.position }),
+  );
   useNuiEvent('timer', (msg) => dispatch({ type: 'timer', seconds: msg.seconds }));
   useNuiEvent('toggleBrief', () => dispatch({ type: 'toggleBrief' }));
   useNuiEvent('atmMenu', (msg) => dispatch({ type: 'atmMenu', show: msg.show }));

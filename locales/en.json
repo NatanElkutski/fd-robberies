@@ -100,7 +100,7 @@
     "reward_failed_inventory": "Couldn't put the reward in your inventory. Check the dirtymoney/CASH setup.",
     "rope_already": "A rope is already attached to an ATM",
     "attaching_rope": "Attaching the rope to the ATM...",
-    "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to a vehicle's trunk and press E to attach it.",
+    "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to a vehicle's trunk and press E to mount it.",
     "attach_hook_prompt": "Attach the hook to the vehicle",
     "hook_attached": "Hook attached. Drive forward hard until the rope goes taut — %d pulls needed.",
     "pull_ok": "Pull %d/%d worked! Reverse a little to give the rope slack.",
@@ -115,7 +115,8 @@
     "all_looted": "Every crew member took their share. Return to the contact to finish the robbery.",
     "vehicle_lost": "The vehicle is gone and the ATM is on the ground. Hook it to another vehicle (E at the trunk).",
     "rehooked": "ATM hooked to the vehicle. Keep towing.",
-    "rip_failed": "Couldn't rip the ATM out. Try pulling again."
+    "rip_failed": "Couldn't rip the ATM out. Try pulling again.",
+    "mounting_hook": "Mounting the hook on the vehicle..."
   },
   "shop": {
     "item_not_defined": "Item %s is not defined in qb-core/shared/items.lua",
@@ -179,7 +180,7 @@
       "subtitle": "ATM HIT",
       "description": "You have 10 minutes to reach any ATM in the city and pick one of three methods: drill, explosive, or ripping it out with a rope and a vehicle.",
       "briefing": [
-        "Start the ATM contract at the NPC.",
+        "Take the ATM contract from your contact.",
         "Find any ATM in the city.",
         "ALT on the ATM and pick: drill / bomb / rope and vehicle.",
         "The rope method needs a vehicle nearby.",
@@ -202,7 +203,7 @@
       "subtitle": "PORT CONTAINER",
       "description": "A valuable shipment is waiting at the port. Start at the contact, drive to the port and open the marked container.",
       "briefing": [
-        "Get the job from the NPC.",
+        "Get the job from your contact.",
         "Drive to the container at the port.",
         "Use third eye at the container point.",
         "Open it and collect the goods."
@@ -213,7 +214,7 @@
       "subtitle": "HIGH-END VEHICLE",
       "description": "A contract to steal a luxury vehicle. Take the job, drive to the location and finish taking over the vehicle.",
       "briefing": [
-        "Get the contract from the NPC.",
+        "Get the contract from your contact.",
         "Drive to the marked target.",
         "ALT at the vehicle point.",
         "Finish the takeover and escape."
@@ -224,7 +225,7 @@
       "subtitle": "FLEECA BANK",
       "description": "A mid-size bank robbery. Start remotely at the contact, then drive to the marked bank.",
       "briefing": [
-        "Start at the NPC.",
+        "Start with your contact.",
         "Drive to the marked Fleeca.",
         "Take control of the bank.",
         "ALT at the vault point and finish the breach."
@@ -323,7 +324,7 @@
       "subtitle": "FINAL HEIST",
       "description": "The biggest robbery in the system. For players who reached level 10.",
       "briefing": [
-        "Take the operation from the NPC.",
+        "Take the operation from your contact.",
         "Drive to Pacific Standard.",
         "Take control of the bank.",
         "ALT near the main vault.",

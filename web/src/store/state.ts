@@ -17,7 +17,14 @@ export interface State {
   search: string;
   cart: CartLine[];
   profile: { open: boolean; face: string };
-  mission: { show: boolean; label: string; briefing: string[]; expanded: boolean; seconds: number };
+  mission: {
+    show: boolean;
+    label: string;
+    briefing: string[];
+    expanded: boolean;
+    seconds: number;
+    position: { left?: string; top?: string };
+  };
   atmMenuOpen: boolean;
   safe: { open: boolean; storeId: number | null; hint: string; label: string };
   locale: LocaleDictionary | null;
@@ -35,7 +42,7 @@ export const initialState: State = {
   search: '',
   cart: [],
   profile: { open: false, face: 'face01' },
-  mission: { show: false, label: '', briefing: [], expanded: false, seconds: 0 },
+  mission: { show: false, label: '', briefing: [], expanded: false, seconds: 0, position: {} },
   atmMenuOpen: false,
   safe: { open: false, storeId: null, hint: '', label: '' },
   locale: null,
@@ -59,7 +66,7 @@ export type Action =
   | { type: 'profileClose' }
   | { type: 'profileFace'; face: string }
   | { type: 'profileSaved'; name: string; face: string }
-  | { type: 'mission'; show: boolean; label?: string; briefing?: string[] }
+  | { type: 'mission'; show: boolean; label?: string; briefing?: string[]; position?: { left?: string; top?: string } }
   | { type: 'timer'; seconds: number }
   | { type: 'toggleBrief' }
   | { type: 'atmMenu'; show: boolean }

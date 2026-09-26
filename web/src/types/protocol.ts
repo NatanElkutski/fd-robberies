@@ -99,7 +99,7 @@ export interface NuiMessages {
   dataRefresh: { data: HubData; nearby: NearbyPlayer[] };
   nearby: { nearby: NearbyPlayer[] };
   lobbyMessage: { message: ChatMessage };
-  mission: { show: boolean; label?: string; briefing?: string[] };
+  mission: { show: boolean; label?: string; briefing?: string[]; position?: { left?: string; top?: string } };
   timer: { seconds: number };
   toggleBrief: Record<string, never>;
   atmMenu: { show: boolean };

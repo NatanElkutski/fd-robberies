@@ -92,6 +92,7 @@ RegisterNetEvent(FD.Events.Client.Started, function(id, _, duration)
         show = true,
         label = locale(('robbery.%s.label'):format(id)),
         briefing = FD.Utils.briefing(id),
+        position = config.missionHud,
     })
     Bridge.Notify(locale(STARTED_NOTIFY[robbery.kind] or 'contract.started_location'), 'success')
 end)

@@ -27,7 +27,6 @@
 local config = require('config.client')
 
 local rope = config.atm.rope
-local VEHICLE_REAR_OFFSET <const> = vec3(0.0, -2.2, 0.3)
 local PROMPT_HEIGHT <const> = 0.9
 local HOOK_PROMPT_DISTANCE <const> = 2.6
 local STOP_SPEED <const> = 0.45
@@ -37,6 +36,7 @@ local MIN_ROPE_LENGTH <const> = 0.5
 local ROPE_REFIT_DELTA <const> = 0.1
 local RIGHT_HAND_BONE <const> = 57005
 local LOOT_ANIM <const> = { dict = 'anim@heists@ornate_bank@grab_cash', clip = 'grab', flag = 1 }
+local MOUNT_ANIM <const> = { dict = 'amb@medic@standing@kneel@base', clip = 'base', flag = 1 }
 local CONTROL_E <const> = 38
 local UNCAPPED_SPEED <const> = 1000.0
 
@@ -87,11 +87,39 @@ local function deleteRope(handle)
     end
 end
 
----@param distance number
+---How much extra rope can hang between two points before the sag dips below the ground.
+---GTA ropes don't collide with the world, so the slack is limited instead: a rope of span d with
+---extra length s sags about sqrt(3·d·s/8), i.e. s = 8·h²/(3·d) for an allowed sag depth h
+---(the lower end's height above the ground under the middle of the rope).
+---@param posA vector3
+---@param posB vector3
+---@param span number
+---@return number slack
+local function allowedSlack(posA, posB, span)
+    if span < 0.5 then
+        return rope.ropeSlack
+    end
+    local mid = (posA + posB) / 2
+    local found, groundZ = GetGroundZFor_3dCoord(mid.x, mid.y, mid.z + 1.0, false)
+    if not found then
+        return rope.ropeSlack
+    end
+    local depth = math.min(posA.z, posB.z) - groundZ - rope.groundClearance
+    if depth <= 0.0 then
+        return 0.0
+    end
+    return math.min(rope.ropeSlack, 8.0 * depth * depth / (3.0 * span))
+end
+
+---Rope length for two ends: the span plus a natural hang that never reaches the ground,
+---capped at the max length (at the cap the rope is taut and pulls).
+---@param posA vector3
+---@param posB vector3
 ---@param maxLength number
 ---@return number
-local function fittedLength(distance, maxLength)
-    return math.min(maxLength, math.max(MIN_ROPE_LENGTH, distance + rope.ropeSlack))
+local function fittedLength(posA, posB, maxLength)
+    local span = #(posA - posB)
+    return math.min(maxLength, math.max(MIN_ROPE_LENGTH, span + allowedSlack(posA, posB, span)))
 end
 
 ---Flexible rope between two entities at the given world positions.
@@ -101,7 +129,7 @@ end
 ---@return integer rope handle
 local function tieRope(entityA, posA, entityB, posB, maxLength)
     loadRopeTextures()
-    local length = fittedLength(#(posA - posB), maxLength)
+    local length = fittedLength(posA, posB, maxLength)
     local handle = AddRope(
         posA.x,
         posA.y,
@@ -140,8 +168,8 @@ local function tieRope(entityA, posA, entityB, posB, maxLength)
     return handle
 end
 
----Keeps a rope just a bit longer than the distance between its ends (up to its max), so it
----looks stretched instead of sagging into the ground, and pulls once it hits the max.
+---Keeps a rope's hang natural but above the ground as its ends move: slack when close,
+---tightening as they move apart, taut and pulling at the max length.
 ---@param handle? integer
 ---@param posA vector3
 ---@param posB vector3
@@ -150,7 +178,7 @@ local function fitRope(handle, posA, posB, maxLength)
     if not handle or not DoesRopeExist(handle) then
         return
     end
-    local desired = fittedLength(#(posA - posB), maxLength)
+    local desired = fittedLength(posA, posB, maxLength)
     if math.abs(GetRopeLength(handle) - desired) > ROPE_REFIT_DELTA then
         RopeForceLength(handle, desired)
     end
@@ -158,15 +186,19 @@ end
 
 -- Geometry -----------------------------------------------------------------------------
 
+---Tow point at the back of a vehicle, from its real model dimensions (works for any car size).
 ---@param vehicle integer
----@return vector3
+---@return vector3 local offset
+local function towPointOffset(vehicle)
+    local min = GetModelDimensions(GetEntityModel(vehicle))
+    return vec3(0.0, min.y + 0.05, min.z + rope.towPointHeight)
+end
+
+---@param vehicle integer
+---@return vector3 world position of the tow point
 local function rearOf(vehicle)
-    return GetOffsetFromEntityInWorldCoords(
-        vehicle,
-        VEHICLE_REAR_OFFSET.x,
-        VEHICLE_REAR_OFFSET.y,
-        VEHICLE_REAR_OFFSET.z
-    )
+    local offset = towPointOffset(vehicle)
+    return GetOffsetFromEntityInWorldCoords(vehicle, offset.x, offset.y, offset.z)
 end
 
 ---@param entity integer
@@ -184,8 +216,9 @@ local function removeTowHook()
     towHook = nil
 end
 
-local function giveTowHook()
-    removeTowHook()
+---Creates the (networked) tow hook prop so the whole crew sees it.
+---@return integer|nil
+local function spawnHook()
     local model = joaat(rope.hookModel)
     RequestModel(model)
     local deadline = GetGameTimer() + 2500
@@ -195,9 +228,51 @@ local function giveTowHook()
     if not HasModelLoaded(model) then
         return
     end
+    local pos = GetEntityCoords(cache.ped)
+    local hook = CreateObject(model, pos.x, pos.y, pos.z - 3.0, true, true, false)
+    SetModelAsNoLongerNeeded(model)
+    SetEntityCollision(hook, false, false)
+    return hook
+end
+
+---Mounts the hook on the vehicle's tow point; it stays there while pulling and towing.
+---@param vehicle integer
+local function mountHook(vehicle)
+    if not towHook or not DoesEntityExist(towHook) then
+        towHook = spawnHook()
+    end
+    if not towHook then
+        return
+    end
+    DetachEntity(towHook, true, false)
+    local offset, rotation = towPointOffset(vehicle), rope.hookVehicleRotation
+    AttachEntityToEntity(
+        towHook,
+        vehicle,
+        0,
+        offset.x,
+        offset.y,
+        offset.z,
+        rotation.x,
+        rotation.y,
+        rotation.z,
+        false,
+        false,
+        false,
+        false,
+        2,
+        true
+    )
+end
+
+local function giveTowHook()
+    removeTowHook()
+    towHook = spawnHook()
+    if not towHook then
+        return
+    end
 
     local ped = cache.ped
-    towHook = CreateObject(model, 0.0, 0.0, 0.0, true, true, false)
     AttachEntityToEntity(
         towHook,
         ped,
@@ -215,7 +290,6 @@ local function giveTowHook()
         1,
         true
     )
-    SetModelAsNoLongerNeeded(model)
 end
 
 -- Vehicle prompt ---------------------------------------------------------------------------
@@ -440,12 +514,34 @@ local function hookTo(rs, vehicle, maxLength)
     syncCrewRope(vehicle, towing)
 end
 
+---Kneel at the trunk and mount the hook on the vehicle (animation). The rope's end moves from
+---the hook in the hand to the hook on the vehicle — the same point — so it stays connected.
+---@param rs RopeState
+---@param vehicle integer
+---@return boolean mounted
+local function mountOnVehicle(rs, vehicle)
+    local point = rearOf(vehicle)
+    TaskTurnPedToFaceCoord(cache.ped, point.x, point.y, point.z, 700)
+    Wait(700)
+    if not FD.Actions.Run(locale('atm.mounting_hook'), rope.hookAttachTime, MOUNT_ANIM) then
+        return false -- cancelled or busy: the player keeps holding the hook
+    end
+    if not DoesEntityExist(vehicle) or not DoesEntityExist(rs.prop) then
+        return false
+    end
+
+    mountHook(vehicle)
+    deleteRope(rs.handRope)
+    rs.handRope = nil
+    return true
+end
+
 ---@param rs RopeState
 ---@param vehicle integer
 local function anchorToVehicle(rs, vehicle)
-    deleteRope(rs.handRope)
-    rs.handRope = nil
-    removeTowHook()
+    if not mountOnVehicle(rs, vehicle) then
+        return
+    end
     rs.stage = 'anchored'
     hookTo(rs, vehicle, rope.ropeLength)
     Bridge.Notify(locale('atm.hook_attached', rope.pullCount), 'success')
@@ -509,6 +605,7 @@ end
 local function loseVehicle(rs)
     deleteRope(rs.rope)
     rs.rope = nil
+    removeTowHook() -- it was mounted on the lost vehicle; a new one is mounted when re-hooking
     rs.vehicle = nil
     rs.stage = 'loose'
     loadedVehicle = nil
@@ -636,10 +733,9 @@ local function tickLoose(rs)
         return
     end
     local vehicle = promptHookVehicle()
-    if vehicle then
-        hookTo(rs, vehicle, rope.towRopeLength)
+    if vehicle and mountOnVehicle(rs, vehicle) then
         rs.stage = 'towing'
-        loadedVehicle = vehicle
+        hookTo(rs, vehicle, rope.towRopeLength)
         Bridge.Notify(locale('atm.rehooked'), 'success')
     end
 end
@@ -695,12 +791,15 @@ function FD.Atm.Rope.Start(entity)
         return Bridge.Notify(message or locale('atm.missing_rope'), 'error')
     end
 
+    -- the hook is in the player's hand while the rope is tied to the ATM, and stays there
+    giveTowHook()
     local done = FD.Actions.Run(locale('atm.attaching_rope'), config.atm.methodTime.rope)
-    if done == nil then
-        return
-    end
     if not done or not DoesEntityExist(entity) then
-        return TriggerServerEvent(FD.Events.Server.ReleaseAtmMethod)
+        removeTowHook()
+        if done == false then
+            TriggerServerEvent(FD.Events.Server.ReleaseAtmMethod)
+        end
+        return
     end
 
     local origin = GetEntityCoords(entity)
@@ -710,6 +809,7 @@ function FD.Atm.Rope.Start(entity)
     local facing = GetOffsetFromEntityGivenWorldCoords(entity, pedPos.x, pedPos.y, pedPos.z)
     local prop, netId = replaceWallAtm(entity)
     if not prop or not netId then
+        removeTowHook()
         TriggerServerEvent(FD.Events.Server.ReleaseAtmMethod)
         return Bridge.Notify(locale('atm.rip_failed'), 'error')
     end
@@ -736,7 +836,9 @@ function FD.Atm.Rope.Start(entity)
     FD.Atm.used[prop] = true
     FD.Atm.crewRopeNetId = netId
 
-    giveTowHook()
+    if not towHook or not DoesEntityExist(towHook) then
+        giveTowHook()
+    end
     if towHook and DoesEntityExist(towHook) then
         state.handRope = tieRope(prop, topOf(prop), towHook, GetEntityCoords(towHook), rope.handRopeLength)
     end
