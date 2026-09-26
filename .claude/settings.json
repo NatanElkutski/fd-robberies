@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(git push -u origin main)",
+      "PowerShell(git fetch origin)",
+      "PowerShell(git push -u --force-with-lease=main:origin/main origin main)",
+      "WebFetch(domain:docs.fivem.net)",
+      "WebFetch(domain:overextended.dev)",
+      "WebFetch(domain:docs.qbcore.org)",
+      "WebSearch",
+      "WebFetch(domain:docs-backend.fivem.net)",
+      "WebFetch(domain:qbcore.org)",
+      "Edit(/.claude/skills/fivem-lua-scripting/**)",
+      "Edit(/.claude/skills/fivem-server-security/**)",
+      "Edit(/.claude/skills/fivem-framework-apis/**)",
+      "Edit(/.claude/skills/fivem-nui/**)",
+      "Edit(/.claude/skills/fivem-escrow-release/**)",
+      "PowerShell(if \\(Test-Path \"C:\\\\Users\\\\natan\\\\.claude\\\\projects\\\\d--projects-fd-robberies\\\\memory\\\\MEMORY.md\"\\) { Get-Content \"C:\\\\Users\\\\natan\\\\.claude\\\\projects\\\\d--projects-fd-robberies\\\\memory\\\\MEMORY.md\" } else { \"NONE\" }; Get-ChildItem .claude\\\\skills -Recurse -File | ForEach-Object { \"{0}  {1} lines\" -f $_.FullName.Replace\\(\\(Get-Location\\).Path+'\\\\',''\\), \\(Get-Content $_.FullName\\).Count })",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:www.fivem-news.com)",
+      "PowerShell(Get-Content config.lua -Encoding utf8 | Select-Object -Skip 60; \\(Get-Content html/style.css\\).Count; \\(Get-Content html/app.js\\).Count)",
+      "PowerShell(node --version)",
+      "PowerShell(npm --version)",
+      "PowerShell(pnpm --version)",
+      "PowerShell(foreach \\($r in 'overextended/ox_inventory','Qbox-project/qbx_core','Qbox-project/qbx_police','project-error/fivem-react-boilerplate-lua','overextended/ox_doorlock','Qbox-project/qbx_truckrobbery'\\) { \"===== $r\"; gh api \"repos/$r/git/trees/HEAD?recursive=1\" --jq '.tree[] | select\\(.type==\\\\\"blob\\\\\"\\) | .path' 2>$null | Where-Object { $_ -notmatch '\\(\\\\.png|\\\\.jpg|\\\\.svg|\\\\.webp|\\\\.ogg|images/\\)' } | Select-Object -First 70 })",
+      "PowerShell(gh api repos/overextended/ox_inventory/contents/fxmanifest.lua --jq .content | % { [Text.Encoding]::UTF8.GetString\\([Convert]::FromBase64String\\($_\\)\\) }; \"===== qbx_truckrobbery fxmanifest\"; gh api repos/Qbox-project/qbx_truckrobbery/contents/fxmanifest.lua --jq .content | % { [Text.Encoding]::UTF8.GetString\\([Convert]::FromBase64String\\($_\\)\\) }; \"===== config/server.lua\"; gh api repos/Qbox-project/qbx_truckrobbery/contents/config/server.lua --jq .content | % { [Text.Encoding]::UTF8.GetString\\([Convert]::FromBase64String\\($_\\)\\) } | Select-Object -First 30; \"===== lint.yml\"; gh api repos/Qbox-project/qbx_truckrobbery/contents/.github/workflows/lint.yml --jq .content | % { [Text.Encoding]::UTF8.GetString\\([Convert]::FromBase64String\\($_\\)\\) }; \"===== ox_doorlock web tree\"; gh api \"repos/overextended/ox_doorlock/git/trees/HEAD?recursive=1\" --jq '.tree[] | select\\(.path|startswith\\(\\\\\"web/src\\\\\"\\)\\) | .path')",
+      "PowerShell(git checkout -b refactor/modular-structure)",
+      "PowerShell(New-Item -ItemType Directory -Force docs/superpowers/specs)",
+      "PowerShell(git add docs/superpowers/specs/2026-09-26-modular-refactor-design.md)",
+      "PowerShell($env:npm_config_yes='true'; npx --yes @johnnymorganz/stylua-bin --version; \"---\"; \"local a = `adder`; a += 1; local b = t?.x\" | Out-File -Encoding ascii \"$env:TEMP\\\\cfx_test.lua\"; npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check \"$env:TEMP\\\\cfx_test.lua\"; \"exit: $LASTEXITCODE\")",
+      "PowerShell(npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check \"C:\\\\Users\\\\natan\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--projects-fd-robberies\\\\735bd28f-1a68-4fb0-a920-b811ff431e2f\\\\scratchpad\\\\cfx_test.lua\"; \"exit: $LASTEXITCODE\"; npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check client.lua 2>&1 | Select-Object -First 5; \"exit: $LASTEXITCODE\")",
+      "PowerShell(git add -A)"
+    ]
+  }
+}
