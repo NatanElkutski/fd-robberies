@@ -1,10 +1,16 @@
 --[[
-    ATM breach (client) — map ATM visibility. While a ripped ATM prop exists, the original map
-    ATM is hidden for every player (it would otherwise stay on the wall). Late joiners fetch the
-    current list; everything is restored when the contract ends or the resource stops.
+    ATM breach (client) — hides one specific map ATM while its networked replacement exists.
+
+    Only the exact map object is hidden (visibility + collision), matched by model and position
+    with a tight radius, so neighbouring ATMs and the replacement prop are never affected.
+    Map objects are recreated when they stream back in, so hidden ones are re-applied while
+    the player is nearby. Late joiners fetch the current list; everything is restored when the
+    contract ends or the resource stops.
 ]]
 
-local HIDE_RADIUS <const> = 1.5
+local MATCH_RADIUS <const> = 0.35
+local REAPPLY_RANGE <const> = 200.0
+local REAPPLY_MS <const> = 1000
 
 ---@type table<string, { coords: vector3, model: integer }>
 local hidden = {}
@@ -13,7 +19,34 @@ local hidden = {}
 ---@param model integer
 ---@return string
 local function keyOf(coords, model)
-    return ('%.1f:%.1f:%.1f:%d'):format(coords.x, coords.y, coords.z, model)
+    return ('%.2f:%.2f:%.2f:%d'):format(coords.x, coords.y, coords.z, model)
+end
+
+---The map (non-networked) ATM at exactly these coordinates, if streamed in. Scans the object
+---pool because the networked replacement sits at the very same spot with the same model.
+---@param coords vector3
+---@param model integer
+---@return integer|nil
+local function mapAtmAt(coords, model)
+    for _, entity in ipairs(GetGamePool('CObject')) do
+        if
+            GetEntityModel(entity) == model
+            and not NetworkGetEntityIsNetworked(entity)
+            and #(GetEntityCoords(entity) - coords) <= MATCH_RADIUS
+        then
+            return entity
+        end
+    end
+end
+
+---@param entry { coords: vector3, model: integer }
+---@param visible boolean
+local function apply(entry, visible)
+    local entity = mapAtmAt(entry.coords, entry.model)
+    if entity then
+        SetEntityVisible(entity, visible, false)
+        SetEntityCollision(entity, visible, visible)
+    end
 end
 
 FD.Atm.World = {}
@@ -21,23 +54,36 @@ FD.Atm.World = {}
 ---@param coords vector3
 ---@param model integer
 function FD.Atm.World.Hide(coords, model)
-    local key = keyOf(coords, model)
-    if hidden[key] then
-        return
-    end
-    hidden[key] = { coords = coords, model = model }
-    CreateModelHide(coords.x, coords.y, coords.z, HIDE_RADIUS, model, true)
+    local entry = { coords = vec3(coords.x, coords.y, coords.z), model = model }
+    hidden[keyOf(entry.coords, model)] = entry
+    apply(entry, false)
 end
 
 ---@param coords vector3
 ---@param model integer
 function FD.Atm.World.Restore(coords, model)
-    local key = keyOf(coords, model)
-    if not hidden[key] then
-        return
+    local key = keyOf(vec3(coords.x, coords.y, coords.z), model)
+    local entry = hidden[key]
+    if entry then
+        hidden[key] = nil
+        apply(entry, true)
     end
-    hidden[key] = nil
-    RemoveModelHide(coords.x, coords.y, coords.z, HIDE_RADIUS, model, false)
+end
+
+---True for a map ATM that is currently hidden (it must not offer breach options).
+---@param entity integer
+---@return boolean
+function FD.Atm.World.IsHidden(entity)
+    if NetworkGetEntityIsNetworked(entity) then
+        return false
+    end
+    local coords, model = GetEntityCoords(entity), GetEntityModel(entity)
+    for _, entry in pairs(hidden) do
+        if entry.model == model and #(entry.coords - coords) <= MATCH_RADIUS then
+            return true
+        end
+    end
+    return false
 end
 
 RegisterNetEvent(FD.Events.Client.HideAtm, function(coords, model)
@@ -55,11 +101,26 @@ CreateThread(function()
     end
 end)
 
+-- map objects are recreated when streamed back in: keep nearby hidden ATMs hidden
+CreateThread(function()
+    while true do
+        Wait(REAPPLY_MS)
+        if next(hidden) then
+            local origin = GetEntityCoords(cache.ped)
+            for _, entry in pairs(hidden) do
+                if #(origin - entry.coords) <= REAPPLY_RANGE then
+                    apply(entry, false)
+                end
+            end
+        end
+    end
+end)
+
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= FD.Resource then
         return
     end
     for _, entry in pairs(hidden) do
-        RemoveModelHide(entry.coords.x, entry.coords.y, entry.coords.z, HIDE_RADIUS, entry.model, false)
+        apply(entry, true)
     end
 end)

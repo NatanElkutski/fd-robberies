@@ -68,6 +68,7 @@ local function canBreach(entity)
         and not FD.Atm.Rope.IsAttachedTo(entity)
         and not FD.Atm.used[entity]
         and not NetworkGetEntityIsNetworked(entity)
+        and not FD.Atm.World.IsHidden(entity)
 end
 
 ---@param entity integer
@@ -157,6 +158,7 @@ local function addCloseZones()
             entity ~= 0
             and DoesEntityExist(entity)
             and not NetworkGetEntityIsNetworked(entity) -- wall ATMs only; the towed prop moves
+            and not FD.Atm.World.IsHidden(entity)
             and not closeZones[tostring(entity)]
         then
             local name = ('je_atm_close_%s'):format(entity)

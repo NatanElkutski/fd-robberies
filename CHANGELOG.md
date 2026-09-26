@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.1.1 — ATM rope fixes
+
+### Fixed
+- The `[E]` prompt at the vehicle showed boxes: GTA's native text can't render Hebrew. Prompts now use the on-screen text UI (NUI) and show Hebrew.
+- The rope never attached (it hung in the air): GTA can't tie ropes to map ATMs. The wall ATM is now swapped for an identical networked ATM as soon as the rope is tied, and every rope attaches to it.
+- Ripping the ATM made it vanish together with the ATM next to it: only the exact wall ATM is hidden now; neighbours are untouched.
+- The ATM and rope now stay until the crew has taken the money, then both are removed. The wall stays empty until the contract ends.
+
+### Changed
+- Pulls: drive forward hard until the rope goes taut (counts as a pull), reverse a little to give slack, repeat. Config: `atm.rope.pullSlack` replaces `pullDistance`, `pullResetSpeed`, `pullResetMs`.
+- Key-binding descriptions (GTA settings menu) are English — the game font can't show Hebrew.
+
 ## 4.1.0 — ATM robbery overhaul
 
 ### Fixed
