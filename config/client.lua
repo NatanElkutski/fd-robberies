@@ -83,14 +83,29 @@ return {
             pullSpeed = 6.5, -- vehicle speed (m/s) when the rope goes taut for a pull to count
             pullSlack = 3.0, -- reverse this many metres of slack to arm the next pull
             lootDistanceFromOrigin = 35.0, -- how far the ATM must be towed before it can be opened
-            ropeLength = 9.0, -- rope from the wall ATM to the vehicle while pulling
-            towRopeLength = 6.0, -- rope between the vehicle and the ripped ATM while towing
+            -- Ropes: they collide with the world and their length follows the distance between the two
+            -- ends (small slack), capped at the max length — at the cap the rope is taut and pulls.
+            ropeType = 4, -- GTA rope style
+            ropeSlack = 0.25, -- metres of sag kept in a rope shorter than its max
+            handRopeLength = 15.0, -- max rope between the ATM and the hook in your hand
+            ropeLength = 9.0, -- max rope from the wall ATM to the vehicle while pulling
+            towRopeLength = 6.0, -- max rope between the vehicle and the ripped ATM while towing
             hookModel = 'prop_rope_hook_01',
+
             ripImpulse = 6.0, -- how hard the ATM is thrown towards the vehicle when it breaks off
-            stopToDropMs = 1500, -- vehicle must stand still this long to unhook the ATM
+            stopToDropMs = 1500, -- vehicle must stand still this long before the crew can loot
             sparksMinSpeed = 2.0, -- ATM speed (m/s) above which it throws sparks while dragged
             rescueExtraDistance = 8.0, -- ATM further than rope length + this from the vehicle is pulled back
             looseRehookDistance = 12.0, -- a loose ATM (vehicle lost) can be re-hooked from this range
+
+            -- Weight and feel of the ripped ATM
+            atmMass = 350.0, -- kg
+            groundDrag = 2.6, -- how quickly friction slows the ATM while it scrapes the ground (per second)
+            atmMaxSpeed = 24.0, -- m/s cap for the ATM itself
+            bodyModel = 'prop_ld_int_safe_01', -- steel body attached behind thin wall ATMs so they have depth
+            bodyMinPanelDepth = 0.45, -- ATM models thinner than this (metres) get the body
+            towMaxSpeed = 22.0, -- m/s (~80 km/h) top speed of the towing vehicle
+            towPowerMultiplier = 0.6, -- engine power of the towing vehicle while it drags the ATM
         },
     },
 }

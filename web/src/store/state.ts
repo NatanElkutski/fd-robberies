@@ -21,6 +21,7 @@ export interface State {
   atmMenuOpen: boolean;
   safe: { open: boolean; storeId: number | null; hint: string; label: string };
   locale: LocaleDictionary | null;
+  worldPrompt: { show: boolean; x: number; y: number; text: string; key: string };
 }
 
 export const initialState: State = {
@@ -38,6 +39,7 @@ export const initialState: State = {
   atmMenuOpen: false,
   safe: { open: false, storeId: null, hint: '', label: '' },
   locale: null,
+  worldPrompt: { show: false, x: 0, y: 0, text: '', key: '' },
 };
 
 export type Action =
@@ -62,4 +64,5 @@ export type Action =
   | { type: 'toggleBrief' }
   | { type: 'atmMenu'; show: boolean }
   | { type: 'safeOpen'; storeId: number; hint: string; label: string }
-  | { type: 'safeClose' };
+  | { type: 'safeClose' }
+  | { type: 'worldPrompt'; show: boolean; x?: number; y?: number; text?: string; key?: string };

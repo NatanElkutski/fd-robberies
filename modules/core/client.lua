@@ -26,6 +26,47 @@ function FD.Nui.IsReady()
     return uiReady
 end
 
+-- Floating world prompt ("[E] ..." above a spot). Rendered by the NUI because GTA's native text
+-- can't draw Hebrew. Call every frame while visible; pass nil to hide.
+---@type { text: string, x: number, y: number }|nil
+local worldPrompt = nil
+local PROMPT_EPSILON <const> = 0.0015
+
+---@param text? string
+---@param coords? vector3 world position the prompt floats at
+---@param key? string key shown in the badge, e.g. 'E'
+function FD.Nui.WorldPrompt(text, coords, key)
+    local onScreen, x, y = false, 0.0, 0.0
+    if text and coords then
+        onScreen, x, y = GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
+    end
+
+    if not onScreen then
+        if worldPrompt then
+            worldPrompt = nil
+            FD.Nui.Send('worldPrompt', { show = false })
+        end
+        return
+    end
+
+    local last = worldPrompt
+    if
+        last
+        and last.text == text
+        and math.abs(last.x - x) < PROMPT_EPSILON
+        and math.abs(last.y - y) < PROMPT_EPSILON
+    then
+        return
+    end
+
+    worldPrompt = {
+        text = text --[[@as string]],
+        x = x,
+        y = y,
+    }
+    FD.Nui.Send('worldPrompt', { show = true, x = x, y = y, text = text, key = key })
+end
+
 ---Gives/releases mouse+keyboard focus. Refuses to take focus while the UI isn't loaded.
 ---@param enabled boolean
 ---@return boolean focused

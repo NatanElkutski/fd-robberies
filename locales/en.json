@@ -101,7 +101,7 @@
     "rope_already": "A rope is already attached to an ATM",
     "attaching_rope": "Attaching the rope to the ATM...",
     "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to a vehicle's trunk and press E to attach it.",
-    "attach_hook_prompt": "[E] Attach the hook to the vehicle",
+    "attach_hook_prompt": "Attach the hook to the vehicle",
     "hook_attached": "Hook attached. Drive forward hard until the rope goes taut — %d pulls needed.",
     "pull_ok": "Pull %d/%d worked! Reverse a little to give the rope slack.",
     "pull_final": "Pull %d/%d — the ATM is ripped off the wall!",

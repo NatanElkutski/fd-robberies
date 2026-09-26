@@ -167,7 +167,7 @@ RegisterNetEvent(FD.Events.Server.RegisterRopeAtm, function(netId, coords, model
 end)
 
 ---Mirrors the tow rope for the rest of the crew (vehicleNetId = nil clears it).
-RegisterNetEvent(FD.Events.Server.RopeTowSync, function(vehicleNetId)
+RegisterNetEvent(FD.Events.Server.RopeTowSync, function(vehicleNetId, towing)
     local src = source
     local contract = contractFor(src)
     if not contract or contract.ropeOwner ~= src or not contract.ropeATM then
@@ -175,11 +175,23 @@ RegisterNetEvent(FD.Events.Server.RopeTowSync, function(vehicleNetId)
     end
 
     vehicleNetId = tonumber(vehicleNetId)
+    towing = towing == true
     for member in pairs(contract.members) do
         if member ~= src then
-            TriggerClientEvent(FD.Events.Client.CrewRopeTow, member, vehicleNetId, contract.ropeATM)
+            TriggerClientEvent(FD.Events.Client.CrewRopeTow, member, vehicleNetId, contract.ropeATM, towing)
         end
     end
+end)
+
+---The steel body attached behind a thin ATM panel when it is ripped out (deleted together with the ATM).
+RegisterNetEvent(FD.Events.Server.RegisterAtmBody, function(netId)
+    local src = source
+    local contract = contractFor(src)
+    netId = tonumber(netId)
+    if not contract or contract.ropeOwner ~= src or not netId or netId <= 0 then
+        return
+    end
+    contract.atmBody = netId
 end)
 
 RegisterNetEvent(FD.Events.Server.RopeLootable, function(netId)
@@ -239,6 +251,7 @@ RegisterNetEvent(FD.Events.Server.RopeLoot, function(netId)
         toCrew(contract, FD.Events.Client.RopeAllLooted, netId)
         SetTimeout(1500, function()
             deleteProp(netId)
+            deleteProp(contract.atmBody)
         end)
     end
 end)
@@ -294,6 +307,7 @@ FD.Contracts.OnClose(function(id, contract)
     end
 
     deleteProp(contract.ropeATM)
+    deleteProp(contract.atmBody)
     if contract.hiddenAtm then
         restore(contract.hiddenAtm)
     end
@@ -305,4 +319,5 @@ AddEventHandler('onResourceStop', function(resource)
     end
     local contract = FD.Contracts.Get(ATM)
     deleteProp(contract and contract.ropeATM)
+    deleteProp(contract and contract.atmBody)
 end)

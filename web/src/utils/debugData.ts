@@ -72,4 +72,10 @@ export function debugData(): void {
 
   send('mission', { show: true, label: 'פריצת כספומט', briefing: ['מצא כל כספומט בעיר.', 'ALT על הכספומט ובחר שיטה.', 'סיים לפני שהזמן נגמר.'] }, 400);
   send('timer', { seconds: 512 }, 500);
+
+  // ?prompt in the URL shows only the floating world prompt (hub closed) for visual checks
+  if (new URLSearchParams(window.location.search).has('prompt')) {
+    send('close', {} as Record<string, never>, 600);
+    send('worldPrompt', { show: true, x: 0.42, y: 0.4, text: 'חבר את הוו לרכב', key: 'E' }, 700);
+  }
 }
