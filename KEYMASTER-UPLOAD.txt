@@ -1,0 +1,22 @@
+FD-robberies - Cfx.re Asset Escrow upload guide
+================================================
+
+1. Keep this source package as a private, unencrypted backup.
+2. Upload the ZIP from the FIVE DEV owner account at https://portal.cfx.re/.
+3. Open Created Assets, choose Create an asset, and name it FD-robberies.
+4. Upload the ZIP and wait for Cfx.re processing.
+5. Download and test the encrypted build on an entitled server.
+6. For sales, attach this FiveM Asset to the matching Tebex package.
+
+Protection layout
+-----------------
+- client.lua and server.lua: protected by Asset Escrow.
+- config.lua: editable customer configuration.
+- html/: shipped as readable NUI files because NUI encryption is unsupported.
+- SQL, item definitions, documentation and license: readable.
+
+Important
+---------
+- Never upload your only source copy.
+- Never add client.lua or server.lua to escrow_ignore.
+- Encryption is performed by Cfx.re after upload, not locally.

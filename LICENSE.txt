@@ -1,0 +1,18 @@
+FD-robberies Proprietary License
+Copyright (c) 2026 FIVE DEV. All rights reserved.
+
+This software and its source code are proprietary to FIVE DEV.
+
+An authorized customer receives a limited, non-exclusive, non-transferable
+license to install and use this resource only through the Cfx.re account and
+server entitlements assigned to that customer.
+
+The customer may edit only files intentionally excluded from Cfx.re Asset
+Escrow protection, such as config.lua, for normal server configuration.
+
+Redistribution, resale, sublicensing, public sharing, source extraction,
+decompilation, circumvention of Asset Escrow, removal of branding, or claiming
+authorship is prohibited without prior written permission from FIVE DEV.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW.

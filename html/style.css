@@ -1,0 +1,841 @@
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;font-family:Inter,"Segoe UI",Arial,sans-serif;color:#f6f4f1}button,input{font:inherit}.hidden{display:none!important}:root{--bg:#080807;--panel:#0d0e0e;--panel2:#121312;--line:#292824;--muted:#85827c;--orange:#ff7a00;--orange2:#ff9d2e;--orangeDark:#4b2609;--danger:#d84b43;--gold:#e7b84d}
+#app{position:fixed;inset:0;background:rgba(0,0,0,.76);display:grid;place-items:center}.shell{width:min(98.5vw,1980px);height:96vh;background:#090a09;border:1px solid #2e2b26;box-shadow:0 28px 90px #000;border-radius:10px;overflow:hidden;position:relative}.shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 52% -15%,rgba(255,122,0,.08),transparent 34%),linear-gradient(120deg,transparent 0 58%,rgba(255,122,0,.018) 58% 59%,transparent 59%)}
+header{height:76px;position:relative;z-index:2;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 22px;border-bottom:1px solid var(--line);background:#0b0c0b}.brand{display:flex;align-items:center;gap:12px}.brandIcon{width:43px;height:43px;display:grid;place-items:center;border-radius:8px;background:linear-gradient(135deg,#ff8a18,#9d3d00);font-weight:950;color:#120900;box-shadow:0 0 22px #ff7a0022}.brand b{display:block;font-size:14px;color:#ff9d3e;letter-spacing:.8px}.brand small{display:block;color:#706d68;margin-top:3px;font-size:10px}.topnav{display:flex;gap:8px}.topnav button,.account button{border:1px solid #24231f;background:#111210;color:#9b9892;padding:11px 28px;border-radius:6px;font-weight:800;cursor:pointer}.topnav button.active{color:#fff;border-color:#5a3213;background:#18130f;box-shadow:inset 0 -2px var(--orange)}.account{display:flex;justify-content:flex-start;align-items:center;gap:8px}.account>span{font-weight:850}.account>b{color:#b6b2ab;font-size:11px;background:#121311;border:1px solid #292824;padding:10px;border-radius:6px}.account i{color:var(--orange);font-style:normal}.account button{background:#291310;border-color:#55211b;color:#f1b2a9}.miniFace{width:39px;height:39px;border-radius:50%;background-size:cover;background-position:center;border:2px solid #5c371a}
+.workspace{height:calc(100% - 76px);display:grid;grid-template-columns:320px minmax(0,1fr);grid-template-rows:minmax(0,1fr) 146px;grid-template-areas:"social main" "social details";direction:ltr;position:relative;z-index:1}.social,.mainarea,.details{direction:rtl}.social{grid-area:social;background:#0a0b0a;border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}.mainarea{grid-area:main;min-width:0;min-height:0;padding:16px 18px 8px;background:linear-gradient(180deg,#10110f,#090a09);overflow:hidden}.details{grid-area:details;border-top:1px solid var(--line);background:#0b0c0b;padding:13px 18px;overflow:hidden}
+.identity{padding:16px;border-bottom:1px solid var(--line);background:linear-gradient(160deg,#15130f,#0a0b0a)}.profileHead{display:flex;align-items:center;gap:12px}.profileHead>div:last-child{flex:1}.profileHead small{display:block;color:#8a867f;font-size:10px}.profileHead b{display:block;font-size:16px;margin:4px 0}.avatar{width:70px;height:70px;border-radius:8px;background-size:cover;background-position:center;border:1px solid #5c3518;box-shadow:inset 0 0 0 3px #0c0c0b}.editProfile{border:0;background:none;color:var(--orange);font-size:9px;padding:0;cursor:pointer}.levelrow{display:flex;justify-content:space-between;margin-top:13px;color:#d9d4cc;font-size:10px}.levelrow span:first-child{color:#ff9a35}.xp i{display:block;height:5px;background:#27251f;margin-top:7px;border-radius:8px;overflow:hidden}.xp em{display:block;height:100%;background:linear-gradient(90deg,#d85200,var(--orange2))}.social section:not(.identity){padding:11px 14px}.social h3{font-size:10px;color:#b6b0a7;letter-spacing:.7px;margin:4px 0 9px}.social h3 i{display:inline-block;width:7px;height:7px;background:var(--orange);transform:rotate(45deg);margin-left:7px}.person{display:flex;justify-content:space-between;align-items:center;background:#11120f;border:1px solid #24231f;padding:8px 9px;margin:5px 0;border-radius:5px;font-size:10px}.person button,.inviteLine button{background:#2d190c;color:#ff9d45;border:1px solid #573015;border-radius:4px;padding:5px 8px;cursor:pointer}.inviteLine{display:flex;gap:5px}.inviteLine input,.chatSend input,#search{background:#090a09;border:1px solid #302d27;color:#fff;padding:9px 10px;border-radius:5px;width:100%;outline:none}.inviteLine input:focus,.chatSend input:focus,#search:focus{border-color:#a64d0b;box-shadow:0 0 0 2px #ff7a0012}.ghost{width:100%;background:#11120f;border:1px solid #292824;color:#9a968f;padding:7px;margin-top:5px;border-radius:5px;cursor:pointer}.chat{display:flex!important;flex-direction:column;min-height:0;flex:1;border-top:1px solid #22211d}.chatMessages{overflow:auto;min-height:100px;flex:1;padding-left:3px;scrollbar-width:thin;scrollbar-color:#633713 transparent}.chatMsg{display:flex;gap:7px;border-bottom:1px solid #1c1c19;padding:7px 0}.chatMsg>div{flex:1}.chatMsg b{font-size:10px}.chatMsg small{display:block;color:#d47a2b;font-size:8px;margin-top:2px}.chatMsg p{margin:4px 0;color:#aaa59d;font-size:10px;line-height:1.35}.chatMsg button{border:0;background:#2c180b;color:#f6933d;width:27px;height:27px;border-radius:4px;cursor:pointer}.chatSend{display:flex;gap:5px;padding-top:7px}.chatSend button{background:var(--orange);border:0;color:#140900;width:38px;border-radius:5px;cursor:pointer;font-weight:900}#chatInput{user-select:text;-webkit-user-select:text;cursor:text}
+.tabPane{height:100%;min-height:0}.sectionTitle{height:54px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #23221e;margin-bottom:10px}.sectionTitle>div{display:grid;grid-template-columns:14px auto;column-gap:7px;align-items:center}.sectionTitle .diamond{grid-row:1/3;width:9px;height:9px;background:var(--orange);transform:rotate(45deg);box-shadow:0 0 15px #ff7a0055}.sectionTitle h2{font-size:15px;margin:0}.sectionTitle small{color:#716e68;font-size:9px}.sectionTitle input{width:330px}.cards{height:calc(100% - 64px);overflow-y:auto;overscroll-behavior:contain;display:grid;grid-template-columns:repeat(4,minmax(190px,1fr));gap:9px;align-content:start;padding:1px 4px 14px 1px;scrollbar-width:thin;scrollbar-color:#633713 #0c0d0b}.cards::-webkit-scrollbar,.shopGrid::-webkit-scrollbar,.chatMessages::-webkit-scrollbar{width:6px}.cards::-webkit-scrollbar-thumb,.shopGrid::-webkit-scrollbar-thumb,.chatMessages::-webkit-scrollbar-thumb{background:#5a3112;border-radius:8px}.card{background:#0e0f0e;border:1px solid #27251f;border-radius:7px;overflow:hidden;cursor:pointer;contain:layout paint;transition:border-color .08s ease,background .08s ease}.card:hover{border-color:#6a3b17;background:#12120f}.card.selected{border-color:var(--orange);box-shadow:inset 0 -2px var(--orange)}.hero{height:118px;background-size:cover;background-position:center;position:relative;background-color:#151612}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,4,3,.05),rgba(8,8,7,.94));pointer-events:none}.badges{position:absolute;z-index:2;top:7px;left:7px;display:flex;gap:4px;direction:ltr}.badges span{font-size:9px;background:#080806dd;border:1px solid #36332c;padding:4px 6px;border-radius:4px}.lock{position:absolute;z-index:3;inset:0;display:grid;place-items:center;background:rgba(7,7,6,.68);font-size:28px;color:#ff7d13}.lock:after{content:"נעול";position:absolute;margin-top:50px;font-size:9px;letter-spacing:1px}.cardText{padding:8px 9px}.cardText b{display:block;font-size:12px}.cardText small{display:block;color:#77736d;font-size:9px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.availability{margin-top:7px;color:#ff9639;border-bottom:2px solid var(--orange);padding-bottom:6px;font-size:9px;font-weight:800}.availability.off{color:#d45b50;border-color:#7b2e27}
+.detailEmpty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#716e68;font-size:15px}.detailEmpty small{font-size:9px;margin-top:5px}.details #detailBody{height:100%;display:grid;grid-template-columns:190px minmax(240px,1.2fr) minmax(270px,1.4fr) 290px;gap:16px;align-items:center}.detailTitle h1{font-size:19px;margin:7px 0 0}.tag{display:inline-block;color:#ff9d49;background:#2b180c;border:1px solid #593015;padding:5px 7px;border-radius:4px;font-size:8px;font-weight:800}.details #detailDesc{color:#8f8a82;line-height:1.5;font-size:10px;margin:0}.detailStats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.detailStats div{background:#11120f;border:1px solid #292720;padding:9px;border-radius:5px}.detailStats small{display:block;color:#716d66;font-size:8px}.detailStats b{color:#ff993d;font-size:14px}.details ol{display:none}.detailActions{display:grid;gap:7px}.detailActions button,.cart button{border:1px solid #693914;padding:11px;background:#2a190d;color:#ffad62;font-weight:800;border-radius:5px;cursor:pointer}.detailActions #startHeist{background:linear-gradient(135deg,#ff8619,#b94600);color:#170900;border-color:#ff8a22}.detailActions .secondary{background:#171815;border-color:#33312b;color:#bbb6ae}.detailActions button:disabled{opacity:.35;cursor:not-allowed}
+.shopLayout{height:calc(100% - 64px);display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:10px;direction:ltr}.shopGrid,.cart{direction:rtl}.shopGrid{overflow-y:auto;display:grid;grid-template-columns:repeat(4,minmax(145px,1fr));gap:8px;align-content:start;padding:1px}.shopItem{background:#0f100e;border:1px solid #28261f;padding:8px;border-radius:6px;cursor:pointer}.shopItem:hover{border-color:#754018}.shopPic{height:96px;display:grid;place-items:center;font-size:45px;background:linear-gradient(145deg,#181812,#0c0d0b);border-radius:5px}.shopItem b,.shopItem small,.shopItem strong{display:block;margin-top:6px}.shopItem b{font-size:11px}.shopItem small{color:#77736c;height:27px;font-size:9px}.shopItem strong{color:#ff9b42;background:#29180c;padding:5px;text-align:center}.cart{background:#0e0f0d;border:1px solid #292720;padding:15px;display:flex;flex-direction:column;border-radius:6px}.cart h2{font-size:15px}.cart #cartItems{flex:1;overflow:auto}.cartRow{display:grid;grid-template-columns:1fr auto auto;gap:6px;padding:8px 0;border-bottom:1px solid #292720;font-size:10px}.cartRow button{padding:2px 7px;background:#3b1c17}.total{display:flex;justify-content:space-between;padding:13px 0}.cart .orange{margin-top:7px;background:#d65b06;color:#160900}
+.mission{position:fixed;left:24px;top:100px;width:350px;background:#0b0c0bf5;border:1px solid #302d27;border-left:3px solid var(--orange);padding:14px;z-index:20;border-radius:6px;box-shadow:0 15px 40px #0008}.missionTop{display:flex;justify-content:space-between;color:#ff9840;font-size:10px}.mission h2{font-size:16px}.mission p,.mission li{color:#9b968e;font-size:10px}.atmModal,.modal{position:fixed;inset:0;background:rgba(0,0,0,.84);display:grid;place-items:center;z-index:50}.atmBox,.keybox,.profileBox{width:560px;background:#0d0e0c;border:1px solid #3a342b;padding:23px;border-radius:9px;box-shadow:0 25px 80px #000}.atmBox>span,.keybox>span,.modalTitle>span{color:#ff8f2b;font-size:9px;letter-spacing:1.5px}.atmChoices{display:grid;gap:7px}.atmChoices button{background:#151611;border:1px solid #302d26;color:white;padding:13px;text-align:right;border-radius:5px;cursor:pointer}.atmChoices button:hover{border-color:var(--orange)}.atmChoices small{display:block;color:#817d76;margin-top:4px}.atmCancel{margin-top:9px;width:100%;padding:9px;background:#292925;color:white;border:0;border-radius:5px}.keybox input,.profileBox>input{width:100%;font-size:16px;padding:11px;background:#080907;border:1px solid #39352e;color:#fff;margin:8px 0 15px;border-radius:5px;outline:none}.keybox input{font-size:28px;text-align:center}.keybox div{display:flex;gap:7px}.keybox button{flex:1;padding:9px}.profileBox{width:690px}.modalTitle h2{margin:6px 0;font-size:22px}.modalTitle p{color:#817d76;font-size:10px;margin:0 0 18px}.profileBox label{display:block;font-size:10px;color:#c3bdb4;margin-top:6px}.faceGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}.faceChoice{aspect-ratio:1;background-size:cover;background-position:center;border:1px solid #302d27;border-radius:7px;cursor:pointer;position:relative}.faceChoice:hover,.faceChoice.selected{border-color:var(--orange);box-shadow:inset 0 0 0 2px #ff7a0044}.faceChoice.selected:after{content:"✓";position:absolute;top:5px;left:5px;width:20px;height:20px;display:grid;place-items:center;border-radius:50%;background:var(--orange);color:#120800;font-weight:900}.profileActions{display:flex;gap:8px;margin-top:18px}.profileActions button{flex:1;padding:11px;border-radius:5px;border:1px solid #3a362f;background:#171815;color:#aaa59e;cursor:pointer}.profileActions #profileSave{background:linear-gradient(135deg,#ff8619,#b94600);border-color:#ff8a22;color:#160900;font-weight:900}kbd{background:#27251f;padding:2px 6px;border-radius:4px}
+@media(min-width:1800px){.cards{grid-template-columns:repeat(5,minmax(185px,1fr))}}@media(max-width:1450px){.workspace{grid-template-columns:285px minmax(0,1fr)}.cards{grid-template-columns:repeat(3,minmax(190px,1fr))}.details #detailBody{grid-template-columns:160px 1fr 1.2fr 240px}.shopGrid{grid-template-columns:repeat(3,minmax(145px,1fr))}}@media(max-width:1100px){.workspace{grid-template-columns:245px minmax(0,1fr)}.cards{grid-template-columns:repeat(2,minmax(180px,1fr))}.brand small{display:none}.detailStats{display:none}.details #detailBody{grid-template-columns:150px 1fr 220px}.sectionTitle input{width:220px}}
+
+/* FIVE DEV — compact in-game robbery HUD */
+.mission{position:fixed;left:24px;top:82px;width:410px;padding:0;background:transparent;border:0;border-radius:0;box-shadow:none;z-index:20;color:#fff;pointer-events:none;font-family:inherit;direction:rtl}
+.missionHint{display:flex;align-items:center;justify-content:flex-start;gap:12px;margin-bottom:16px;font-size:16px;font-weight:900;text-shadow:0 2px 10px #000}
+.missionHint kbd{width:42px;height:42px;display:grid;place-items:center;background:#f4f1e9;color:#171717;border:1px solid #fff;border-radius:8px;font-size:24px;font-weight:500;box-shadow:0 4px 14px #0007;padding:0}
+.missionMain{position:relative;padding:0 0 8px}
+.missionClock{display:flex;align-items:center;justify-content:flex-start;gap:14px;margin-bottom:15px;direction:rtl}
+.missionPill{display:inline-flex;align-items:center;justify-content:center;min-width:118px;height:48px;padding:0 18px;border-radius:25px;background:linear-gradient(135deg,#ff8a1c,#e85c00);color:#160a02;font-size:17px;font-weight:950;box-shadow:0 7px 22px #ff6b002c;border:1px solid #ff9a3d}
+#missionTimer{font-size:30px;line-height:1;font-weight:950;letter-spacing:-1px;color:#fff;text-shadow:0 3px 12px #000}
+.missionContract{display:none}
+.missionObjective{display:flex;align-items:center;gap:13px;color:#ff9a42;font-size:18px;font-weight:750;line-height:1.4;text-shadow:0 2px 10px #000;max-width:405px}
+.missionObjective i{flex:0 0 13px;width:13px;height:13px;background:#ff7a00;transform:rotate(45deg);box-shadow:0 0 18px #ff7a00aa}
+.missionBrief{margin-top:14px;width:100%;background:linear-gradient(145deg,rgba(13,13,11,.96),rgba(7,7,6,.93));border:1px solid #40301f;border-right:3px solid #ff7a00;border-radius:8px;box-shadow:0 16px 40px #0009;overflow:hidden;pointer-events:auto}
+.briefHead{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #30261d;background:#16120e}.briefHead span{font-size:13px;font-weight:900;color:#ff9a42}.briefHead small{font-size:9px;color:#80786f}
+.missionBrief ol{display:block!important;list-style:none;margin:0;padding:8px 12px 12px}.missionBrief li{display:grid;grid-template-columns:28px 1fr;align-items:center;gap:9px;padding:8px 4px;border-bottom:1px solid #24201b;color:#8d877f;font-size:10px}.missionBrief li:last-child{border-bottom:0}.missionBrief li>span{width:24px;height:24px;display:grid;place-items:center;border-radius:50%;background:#191713;border:1px solid #373028;color:#756f67;font-size:9px;font-weight:900}.missionBrief li p{margin:0;color:inherit;font-size:10px}.missionBrief li.current{color:#f5efe7}.missionBrief li.current>span{background:#ff7a00;color:#160800;border-color:#ff9c47;box-shadow:0 0 13px #ff7a0040}.missionBrief li.current p{color:#ffb06c;font-weight:800}
+.mission.expanded .missionHint kbd{background:#ff7a00;color:#160800;border-color:#ffad68}.mission.hidden{display:none!important}
+@media(max-width:900px){.mission{left:15px;top:65px;width:330px}.missionHint{font-size:13px}.missionHint kbd{width:36px;height:36px;font-size:20px}.missionPill{min-width:100px;height:42px;font-size:14px}#missionTimer{font-size:25px}.missionObjective{font-size:15px}}
+
+/* V2.5 — immersive convenience-store safe keypad */
+.safeScene{width:min(920px,88vw);min-height:610px;display:grid;place-items:center;padding:46px;background:linear-gradient(145deg,#171713,#080908);border:1px solid #3b332a;border-radius:14px;box-shadow:0 35px 110px #000;position:relative;overflow:hidden}.safeScene:before{content:"";position:absolute;inset:18px;border:3px solid #22231f;border-radius:12px;box-shadow:inset 0 0 45px #000;pointer-events:none}.safeDoor{width:100%;max-width:720px;display:grid;grid-template-columns:360px 1fr;gap:34px;align-items:center;direction:ltr;position:relative;z-index:1}.safePanel{direction:rtl;background:linear-gradient(160deg,#191a17,#090a09);border:8px solid #2c2d29;border-radius:22px;padding:22px;box-shadow:0 0 0 2px #070807,0 18px 45px #000}.safeBrand{display:block;color:#ff8b28;font-size:9px;letter-spacing:1.6px;text-align:center}.safePanel h2{text-align:center;margin:7px 0 12px;font-size:16px;color:#d7d3cc}.safeDisplay{height:62px;display:grid;place-items:center;background:linear-gradient(180deg,#ff9b36,#e96808);border:4px solid #0a0a09;border-radius:9px;color:#1b0b02;font-size:30px;font-weight:950;letter-spacing:12px;direction:ltr;box-shadow:inset 0 0 18px #fff2}.safeKeys{display:grid!important;grid-template-columns:repeat(3,1fr);gap:9px!important;margin-top:14px}.safeKeys button{height:58px!important;min-width:0;border:1px solid #3b3933!important;border-radius:11px!important;background:linear-gradient(180deg,#353630,#20211e)!important;color:#f5f2eb!important;font-size:20px!important;font-weight:850!important;cursor:pointer;box-shadow:inset 0 1px #ffffff12,0 4px 10px #0006}.safeKeys button:hover{border-color:#ff8b28!important;background:#3c2b1c!important}.safeKeys .safeConfirm{background:linear-gradient(135deg,#ff941f,#dc5c00)!important;color:#1a0900!important;border-color:#ff9e42!important;font-size:13px!important}.safeKeys .safeClear{color:#ffb37a!important;font-size:18px!important}.safeCancel{width:100%;margin-top:10px;padding:10px!important;border-radius:8px;border:1px solid #393833;background:#151613;color:#9b9790;cursor:pointer}.safeNote{direction:rtl;align-self:end;margin-bottom:32px;background:#ece7da;color:#29261f;padding:22px 24px;min-height:150px;transform:rotate(-2deg);clip-path:polygon(2% 3%,98% 0,100% 92%,93% 96%,85% 93%,77% 98%,68% 94%,58% 99%,49% 95%,39% 99%,30% 94%,20% 98%,11% 94%,0 98%);box-shadow:0 14px 25px #0008}.safeNote b{display:block;font-size:18px;border-bottom:2px solid #39342b;padding-bottom:7px}.safeNote p{font-size:14px;line-height:1.55;margin:12px 0;color:#302b22;font-weight:700}.safeNote small{color:#776f62}.keybox{display:none!important}@media(max-width:850px){.safeScene{padding:24px}.safeDoor{grid-template-columns:1fr;max-width:410px}.safeNote{margin:0;transform:none}.safePanel{padding:16px}}
+\n/* V2.7 cinematic contract art + criminal avatar polish */
+.hero{height:132px;background-position:center;background-size:cover;filter:saturate(1.08) contrast(1.04)}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,122,0,.10),transparent 38%),radial-gradient(circle at 80% 15%,rgba(255,145,42,.10),transparent 32%);z-index:1;pointer-events:none}
+.card:hover .hero{filter:saturate(1.18) contrast(1.07) brightness(1.05)}
+.faceChoice{min-height:92px;background-color:#111;background-repeat:no-repeat;box-shadow:inset 0 -28px 38px #0007,0 5px 16px #0005}
+.faceChoice:before{content:attr(data-face);position:absolute;right:6px;bottom:5px;color:#ff9d45;font-size:7px;letter-spacing:.6px;text-transform:uppercase;background:#080808b8;padding:2px 4px;border-radius:3px}
+
+/* V2.7.3 REFERENCE VIDEO ASSETS */
+.hero{background-size:cover!important;background-position:center!important;position:relative}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(7,7,10,.84));pointer-events:none}
+.card{overflow:hidden}
+.card .badges,.card .lock,.card .meta,.card .content{position:relative;z-index:2}
+.avatar,.miniFace,.faceChoice{background-size:cover!important;background-position:center!important;border-radius:50%!important}
+.faceChoice{aspect-ratio:1/1;border:2px solid rgba(255,255,255,.14)!important;overflow:hidden}
+.faceChoice.selected{border-color:#ff7a00!important;box-shadow:0 0 0 3px rgba(255,122,0,.18),0 0 24px rgba(255,122,0,.25)}
+.productPhoto{height:150px!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;color:transparent!important}
+.shopItem{overflow:hidden;background:linear-gradient(180deg,#16171a,#0c0d0f)!important;border:1px solid rgba(255,255,255,.07)!important}
+.shopItem:hover{border-color:rgba(255,122,0,.45)!important;transform:translateY(-2px)}
+
+/* ===== V2.8.0 VIDEO-MATCH UI REBUILD ===== */
+:root{--orange:#ff7a00;--orange2:#ff9b35;--ink:#090a0a;--panel:#0e100f;--line:#252823}
+.shell{width:min(92vw,1840px)!important;height:82vh!important;border-radius:0!important;background:rgba(8,9,9,.985)!important;border:1px solid #20231f!important;box-shadow:0 30px 100px #000!important}
+header{height:82px!important;background:#0d0f0e!important;border-bottom:1px solid #20231f!important}
+.workspace{height:calc(100% - 82px)!important;grid-template-columns:360px minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) 150px!important}
+.social{background:#0c0e0d!important;border-right:1px solid #242723!important}
+.mainarea{padding:14px 16px 8px!important;background:#0b0d0c!important}
+.cards{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:10px!important;align-content:start!important;overflow:auto!important;padding:0 2px 10px!important;scrollbar-width:thin;scrollbar-color:#6f3512 transparent}
+.card{height:205px!important;background:#101211!important;border:1px solid #252923!important;border-radius:5px!important;overflow:hidden!important;transition:.16s ease!important;box-shadow:none!important}
+.card:hover{transform:translateY(-2px)!important;border-color:#754019!important}
+.card.selected{border-color:var(--orange)!important;box-shadow:0 0 0 1px var(--orange),0 0 24px rgba(255,122,0,.11)!important}
+.card .hero{height:165px!important;position:relative!important;background-size:cover!important;background-position:center!important;filter:none!important}
+.card .hero:after{display:none!important}
+.heroShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.18) 45%,rgba(7,8,8,.94) 100%)}
+.badges{position:absolute!important;top:8px!important;left:8px!important;right:8px!important;display:flex!important;gap:5px!important;z-index:3!important}
+.badge{font-size:10px!important;font-weight:850!important;padding:4px 7px!important;border-radius:3px!important;background:rgba(8,9,9,.82)!important;border:1px solid rgba(255,255,255,.09)!important;color:#eee!important;backdrop-filter:blur(3px)}
+.badge.crew{margin-left:auto!important}
+.heroTitle{position:absolute;z-index:3;right:12px;left:12px;bottom:10px;text-align:right}
+.heroTitle b{display:block;font-size:14px!important;color:#fff!important;text-shadow:0 2px 8px #000}
+.heroTitle small{display:block;margin-top:3px;font-size:9px!important;color:#a6aaa4!important;letter-spacing:.5px}
+.cardStatus{height:40px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;padding:0 11px!important;color:#ff8b27!important;font-size:10px!important;font-weight:850!important;border-top:1px solid #1d201d!important;position:relative!important}
+.cardStatus:after{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--orange)}
+.cardStatus.off{color:#a94c44!important}.cardStatus.off:after{background:#8d322d!important}
+.cardStatus i{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 10px currentColor}
+.lockMark{position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);width:42px;height:42px;border:2px solid #b64646;border-radius:50%;display:grid;place-items:center;color:#dc5555;background:rgba(10,10,10,.58);font-size:22px}
+.card.locked .hero{filter:saturate(.5) brightness(.62)!important}
+.cardText,.availability,.lock{display:none!important}
+
+/* Reference-style profile and avatar selector */
+.avatar,.miniFace,.faceChoice{background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;border-radius:50%!important}
+.avatar{width:72px!important;height:72px!important;border:2px solid #5a3a1d!important}
+.miniFace{width:40px!important;height:40px!important}
+.faceGrid{display:grid!important;grid-template-columns:repeat(4,82px)!important;gap:13px!important;justify-content:center!important}
+.faceChoice{width:82px!important;height:82px!important;border:3px solid #272a27!important;background-color:#141614!important;cursor:pointer!important;transition:.15s!important}
+.faceChoice:hover{transform:scale(1.05);border-color:#8a4c1c!important}
+.faceChoice.selected{border-color:var(--orange)!important;box-shadow:0 0 0 3px rgba(255,122,0,.16),0 0 24px rgba(255,122,0,.28)!important}
+
+/* Reference-style black market */
+.shopGrid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important;align-content:start!important}
+.shopItem{padding:0!important;overflow:hidden!important;background:#111311!important;border:1px solid #252824!important;border-radius:3px!important;transition:.15s!important}
+.shopItem:hover{transform:translateY(-2px)!important;border-color:#754019!important}
+.productPhoto{height:160px!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;border-bottom:1px solid #252824!important}
+.shopInfo{padding:10px 12px!important;min-height:70px!important}
+.shopInfo b{display:block!important;color:#fff!important;font-size:13px!important}
+.shopInfo small{display:block!important;color:#898d87!important;font-size:9px!important;margin-top:5px!important;line-height:1.35!important}
+.shopPrice{display:block!important;padding:11px 12px!important;text-align:center!important;background:rgba(255,122,0,.10)!important;color:#ff922f!important;border-top:1px solid rgba(255,122,0,.18)!important;font-size:13px!important}
+
+/* Details strip like the reference video's bottom info panel */
+.details{background:#0d0f0e!important;border-top:1px solid #252824!important;padding:14px 18px!important}
+#detailBody{height:100%!important}
+#detailStats>div{background:#111311!important;border:1px solid #272a26!important}
+#startHeist{background:linear-gradient(180deg,#ff8b19,#e76700)!important;color:#120900!important;border-color:#ff9d3d!important;font-weight:950!important}
+
+/* =========================================================
+   V3.0.0 — FIVE DEV ORANGE/BLACK REFERENCE UI
+   Built to visually match the approved mockup while keeping
+   all existing crew/chat/heist/shop/mission functionality.
+   ========================================================= */
+:root{
+ --fd:#ff7800;--fd2:#ff9a32;--fdGlow:rgba(255,120,0,.22);
+ --black:#050708;--black2:#090b0c;--panel:#0d1011;--panel2:#111416;
+ --stroke:#282d2f;--text:#f6f7f7;--soft:#9ca2a5;
+}
+#app{background:rgba(0,0,0,.70)!important;backdrop-filter:blur(3px)}
+.shell{
+ width:96vw!important;height:94vh!important;max-width:1920px!important;
+ border:1px solid #24292b!important;border-radius:9px!important;
+ background:linear-gradient(145deg,#080a0b,#050708 58%,#080b0c)!important;
+ box-shadow:0 32px 110px #000!important;
+}
+header{
+ height:72px!important;padding:0 20px!important;
+ grid-template-columns:1fr auto 1fr!important;
+ background:linear-gradient(180deg,#0b0e0f,#07090a)!important;
+ border-bottom:1px solid #252a2c!important;
+}
+.brandIcon{
+ width:58px!important;height:42px!important;border-radius:6px!important;
+ background:linear-gradient(135deg,#ff8d1c,#df5700)!important;
+ color:#111!important;font-size:15px!important;font-style:italic!important;
+ transform:skew(-8deg);box-shadow:0 0 25px rgba(255,112,0,.16)!important
+}
+.brand b{font-size:15px!important;color:#fff!important;letter-spacing:1.4px!important}
+.brand small{font-size:8px!important;letter-spacing:1.2px!important;text-transform:uppercase!important}
+.topnav{gap:10px!important}
+.topnav button{
+ min-width:132px!important;padding:12px 22px!important;border-radius:4px!important;
+ background:#0d1011!important;border:1px solid #2a2f31!important;color:#b8bdc0!important;
+}
+.topnav button.active{
+ color:#fff!important;border-color:#9a480d!important;
+ background:linear-gradient(180deg,#2b160a,#16100c)!important;
+ box-shadow:inset 0 -2px var(--fd),0 0 18px rgba(255,120,0,.10)!important
+}
+.account button{border-radius:4px!important}
+.workspace{
+ height:calc(100% - 72px)!important;
+ grid-template-columns:245px minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr) 142px!important;
+}
+.social{
+ background:
+ linear-gradient(180deg,rgba(7,9,10,.98),rgba(7,9,10,.98)),
+ radial-gradient(circle at 50% 90%,rgba(255,110,0,.15),transparent 30%)!important;
+ border-right:1px solid #252a2c!important;
+}
+.identity{
+ padding:18px 14px 15px!important;
+ background:linear-gradient(180deg,#0c0f10,#090b0c)!important;
+ text-align:center!important
+}
+.profileHead{flex-direction:column!important;gap:7px!important}
+.avatar{
+ width:86px!important;height:86px!important;border-radius:50%!important;
+ border:2px solid var(--fd)!important;
+ box-shadow:0 0 0 4px #111,0 0 22px rgba(255,120,0,.14)!important
+}
+.profileHead small{font-size:9px!important}
+.profileHead b{font-size:16px!important}
+.editProfile{
+ margin-top:3px!important;padding:5px 12px!important;border:1px solid #67340f!important;
+ border-radius:4px!important;background:#1b1009!important;color:#ff9838!important
+}
+.levelrow{margin-top:12px!important}
+.social section:not(.identity){padding:10px 12px!important}
+.social h3{
+ margin:3px 0 8px!important;padding-bottom:7px!important;
+ border-bottom:1px solid #202527!important;color:#e2e5e6!important;font-size:9px!important
+}
+#crewMembers>div,.nearbyRow,.inviteRow{
+ background:#0e1112!important;border:1px solid #24292b!important;border-radius:4px!important
+}
+.inviteLine input,.chatSend input{
+ background:#090b0c!important;border:1px solid #2b3032!important;border-radius:4px!important
+}
+.ghost{border-radius:4px!important;background:#0d1011!important}
+.chat{min-height:0!important;flex:1!important;display:flex!important;flex-direction:column!important}
+.chatMessages{flex:1!important;min-height:70px!important}
+.mainarea{
+ padding:13px 14px 8px!important;
+ background:linear-gradient(180deg,#0b0e0f,#07090a)!important;
+}
+.sectionTitle{
+ height:52px!important;margin-bottom:10px!important;padding:0 2px!important;
+ border-bottom:1px solid #202527!important
+}
+.sectionTitle h2{font-size:17px!important;margin:0!important;color:#fff!important}
+.sectionTitle small{font-size:9px!important;color:#81888b!important}
+.sectionTitle .diamond{background:var(--fd)!important;box-shadow:0 0 12px var(--fdGlow)!important}
+#search{
+ width:245px!important;height:38px!important;border-radius:4px!important;
+ background:#090b0c!important;border:1px solid #2b3032!important;color:#ddd!important
+}
+.cards{
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:170px!important;gap:8px!important;padding:0 1px 8px!important;
+}
+.card{
+ height:170px!important;border-radius:4px!important;
+ border:1px solid #292e30!important;background:#0c0f10!important;
+}
+.card:hover{border-color:#8b430f!important;transform:translateY(-1px)!important}
+.card.selected{
+ border-color:var(--fd)!important;
+ box-shadow:0 0 0 1px rgba(255,120,0,.35),0 0 20px rgba(255,120,0,.09)!important
+}
+.card .hero{height:137px!important}
+.heroShade{
+ background:linear-gradient(180deg,rgba(0,0,0,.03),rgba(0,0,0,.12) 40%,rgba(5,7,8,.93) 100%)!important
+}
+.badges{top:6px!important;left:6px!important;right:6px!important}
+.badge{
+ padding:3px 5px!important;font-size:8px!important;border-radius:3px!important;
+ background:rgba(5,7,8,.84)!important
+}
+.heroTitle{right:9px!important;left:9px!important;bottom:7px!important}
+.heroTitle b{font-size:12px!important}
+.heroTitle small{font-size:7px!important;text-transform:uppercase!important;color:#a5aaac!important}
+.cardStatus{height:33px!important;padding:0 9px!important;font-size:8px!important}
+.cardStatus:after{height:2px!important}
+.lockMark{
+ width:38px!important;height:38px!important;font-size:18px!important;
+ border-color:#ff8a1e!important;color:#ff9b36!important;background:rgba(8,8,8,.72)!important
+}
+.card.locked .hero{filter:saturate(.58) brightness(.58)!important}
+.details{
+ padding:12px 14px!important;background:#090c0d!important;border-top:1px solid #252a2c!important
+}
+.detailEmpty{font-size:15px!important}
+#detailBody{
+ display:grid!important;grid-template-columns:minmax(280px,1.6fr) minmax(250px,1fr) auto!important;
+ gap:16px!important;align-items:center!important
+}
+.detailTitle{grid-column:1!important}.detailTitle h1{font-size:18px!important;margin:4px 0!important}
+#detailDesc{grid-column:1!important;margin:0!important;font-size:10px!important;color:#a4aaac!important}
+.detailStats{grid-column:2!important;grid-row:1/3!important;gap:6px!important}
+.detailStats>div{padding:9px!important;border-radius:4px!important}
+#detailBrief{display:none!important}
+.detailActions{grid-column:3!important;grid-row:1/3!important;display:flex!important;flex-direction:column!important;gap:7px!important}
+.detailActions button{min-width:180px!important;height:42px!important;border-radius:4px!important}
+#startHeist{
+ background:linear-gradient(180deg,#ff921f,#ed6500)!important;
+ color:#150900!important;box-shadow:0 0 20px rgba(255,120,0,.12)!important
+}
+/* Black Market exactly in the same visual family */
+.shopLayout{grid-template-columns:minmax(0,1fr) 285px!important;gap:12px!important}
+.shopGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:8px!important}
+.shopItem{border-radius:4px!important;background:#0e1112!important;border-color:#292e30!important}
+.productPhoto{height:145px!important;background-color:#090b0c!important}
+.shopInfo{min-height:60px!important;padding:8px 10px!important}
+.shopInfo b{font-size:11px!important}.shopInfo small{font-size:8px!important}
+.shopPrice{padding:9px!important;font-size:11px!important;color:#ff9a35!important}
+.cart{background:#0c0f10!important;border:1px solid #292e30!important;border-radius:4px!important}
+/* Avatar selector from the approved mockup */
+.profileBox{
+ width:620px!important;background:#0b0e0f!important;border:1px solid #303638!important;
+ border-radius:6px!important;box-shadow:0 35px 100px #000!important
+}
+.faceGrid{
+ grid-template-columns:repeat(6,76px)!important;gap:12px!important;
+ padding:10px 0!important
+}
+.faceChoice{
+ width:76px!important;height:76px!important;border-radius:50%!important;
+ border:2px solid #343a3c!important;background-color:#090b0c!important
+}
+.faceChoice.selected{
+ border-color:var(--fd)!important;
+ box-shadow:0 0 0 3px rgba(255,120,0,.15),0 0 20px rgba(255,120,0,.18)!important
+}
+.profileActions button{border-radius:4px!important}
+/* Mission HUD keeps requested B-panel, now matching orange theme */
+.missionPill{background:linear-gradient(90deg,#ff7b00,#ff9a32)!important;color:#170900!important}
+.missionObjective i{background:var(--fd)!important;box-shadow:0 0 10px var(--fdGlow)!important}
+@media(max-width:1400px){
+ .workspace{grid-template-columns:220px minmax(0,1fr)!important}
+ .cards{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+}
+
+/* =========================================================
+   V3.1.0 — EXACT REFERENCE PROPORTIONS
+   ========================================================= */
+.shell{width:96vw!important;height:94vh!important;max-width:1900px!important;overflow:hidden!important}
+header{height:74px!important}
+.workspace{
+ height:calc(100% - 74px)!important;
+ display:grid!important;
+ grid-template-columns:270px minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;
+}
+.social{
+ grid-column:1!important;grid-row:1!important;
+ width:auto!important;min-width:0!important;overflow:hidden!important;
+ background:
+ linear-gradient(180deg,rgba(7,9,10,.93),rgba(7,9,10,.98)),
+ radial-gradient(circle at 45% 80%,rgba(255,105,0,.22),transparent 34%)!important
+}
+.mainarea{
+ grid-column:2!important;grid-row:1!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ padding:14px 15px 22px!important;
+ scrollbar-width:thin;scrollbar-color:#8a410d #090b0c
+}
+.details{
+ position:relative!important;grid-column:auto!important;grid-row:auto!important;
+ min-height:126px!important;margin-top:14px!important;border:1px solid #242a2c!important;
+ border-radius:5px!important
+}
+.sectionTitle{height:52px!important}
+.cards{
+ display:grid!important;
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:196px!important;
+ gap:9px!important;
+ overflow:visible!important;
+ padding-bottom:12px!important
+}
+.card{height:196px!important}
+.card .hero{height:158px!important}
+.heroTitle b{font-size:14px!important}
+.heroTitle small{font-size:8px!important}
+.cardStatus{height:38px!important;font-size:9px!important}
+.badge{font-size:9px!important;padding:4px 6px!important}
+.lockMark{width:42px!important;height:42px!important}
+
+/* Stronger reference sidebar */
+.identity{padding-top:24px!important}
+.avatar{width:104px!important;height:104px!important}
+.profileHead b{font-size:18px!important}
+.social h3{font-size:10px!important}
+.social section:not(.identity){padding-left:14px!important;padding-right:14px!important}
+#crewMembers>div,.nearbyRow,.inviteRow,.ghost{min-height:42px!important}
+
+/* Reference-style avatar strip shown as a substantial selector */
+.profileBox{width:760px!important}
+.faceGrid{
+ grid-template-columns:repeat(6,94px)!important;
+ gap:16px!important;
+ justify-content:center!important
+}
+.faceChoice{width:94px!important;height:94px!important}
+
+/* Bigger black-market products like the reference */
+.shopLayout{grid-template-columns:minmax(0,1fr) 310px!important}
+.shopGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+.productPhoto{height:178px!important}
+.shopInfo{min-height:68px!important}
+.shopInfo b{font-size:13px!important}
+.shopPrice{font-size:13px!important}
+
+/* Make the main visual hierarchy match the supplied mockup */
+#search{width:280px!important}
+.sectionTitle h2{font-size:19px!important}
+.sectionTitle small{font-size:10px!important}
+.detailTitle h1{font-size:20px!important}
+#detailDesc{font-size:11px!important;line-height:1.5!important}
+.detailActions button{height:46px!important;min-width:200px!important}
+
+/* Avoid the huge dead area seen in V3.0 */
+@media(min-width:1450px){
+ .cards{grid-auto-rows:205px!important}
+ .card{height:205px!important}
+ .card .hero{height:165px!important}
+}
+
+/* ================= V3.2 EXACT ONE-TO-ONE REFERENCE ================= */
+html,body,#app{width:100%;height:100%;margin:0;overflow:hidden}
+#app{display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(0,0,0,.74)!important}
+.shell{
+ width:96vw!important;height:94vh!important;max-width:none!important;
+ border-radius:0!important;border:1px solid #25282a!important;
+ background:#07090a!important;box-shadow:0 0 80px #000!important
+}
+header{
+ height:72px!important;padding:0 22px!important;
+ display:grid!important;grid-template-columns:310px 1fr 310px!important;
+ align-items:center!important;background:#090b0c!important;border-bottom:1px solid #282b2d!important
+}
+.brand{justify-self:start!important}.brandIcon{width:66px!important;height:45px!important;font-size:20px!important}
+.brand b{font-size:18px!important}.brand small{font-size:8px!important}
+.topnav{justify-self:center!important;display:flex!important;gap:8px!important}
+.topnav button{height:44px!important;min-width:145px!important;font-size:12px!important}
+.account{justify-self:end!important}
+.workspace{
+ height:calc(100% - 72px)!important;display:grid!important;
+ grid-template-columns:270px minmax(0,1fr)!important;
+ grid-template-rows:100%!important
+}
+.social{
+ grid-column:1!important;grid-row:1!important;height:100%!important;
+ border-right:1px solid #282b2d!important;background:#090b0c!important;
+ display:flex!important;flex-direction:column!important
+}
+.identity{height:215px!important;box-sizing:border-box!important;padding:18px 15px!important}
+.avatar{width:108px!important;height:108px!important}
+.profileHead b{font-size:17px!important}.levelrow{width:100%!important}
+.social section:not(.identity){padding:10px 14px!important}
+.chat{flex:1!important;min-height:150px!important}
+.mainarea{
+ grid-column:2!important;grid-row:1!important;height:100%!important;box-sizing:border-box!important;
+ overflow-y:auto!important;padding:14px 14px 24px!important;background:#080a0b!important
+}
+.sectionTitle{height:50px!important;margin:0 0 10px!important}
+.sectionTitle h2{font-size:19px!important}.sectionTitle small{font-size:10px!important}
+#search{height:40px!important;width:280px!important}
+.cards{
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:190px!important;gap:9px!important;overflow:visible!important;
+ align-content:start!important;padding:0!important
+}
+.card{height:190px!important;border-radius:4px!important;background:#0d0f10!important;border:1px solid #303335!important}
+.card .hero{height:153px!important;background-size:cover!important;background-position:center!important}
+.heroTitle{bottom:8px!important}.heroTitle b{font-size:14px!important}.heroTitle small{font-size:8px!important}
+.badges{top:7px!important}.badge{font-size:9px!important;padding:4px 6px!important}
+.cardStatus{height:37px!important;font-size:9px!important}
+.card.selected{border-color:#ff7600!important;box-shadow:0 0 0 1px #ff7600!important}
+.lockMark{width:40px!important;height:40px!important;border-color:#ff7600!important;color:#ff8c24!important}
+.details{
+ min-height:135px!important;margin-top:14px!important;padding:13px 15px!important;
+ background:#0b0d0e!important;border:1px solid #292d2f!important;border-radius:4px!important
+}
+#detailBody{grid-template-columns:minmax(350px,1.6fr) minmax(300px,1fr) 210px!important}
+.detailActions button{width:210px!important;height:44px!important}
+
+/* Avatar selection exactly as the large horizontal portrait row in the reference */
+.profileBox{width:940px!important;max-width:90vw!important;padding:20px!important}
+.faceGrid{
+ display:flex!important;flex-wrap:nowrap!important;gap:16px!important;justify-content:center!important;
+ overflow-x:auto!important;padding:14px 8px 18px!important
+}
+.faceChoice{
+ flex:0 0 102px!important;width:102px!important;height:102px!important;border-radius:50%!important;
+ border:2px solid #603416!important;background-size:cover!important
+}
+.faceChoice.selected{border:4px solid #ff7b00!important;box-shadow:0 0 0 3px #18100a,0 0 24px rgba(255,123,0,.3)!important}
+
+/* Black market: eight wide product tiles, same visual rhythm as reference */
+.shopLayout{grid-template-columns:1fr!important}
+.shopGrid{
+ display:grid!important;grid-template-columns:repeat(8,minmax(0,1fr))!important;
+ gap:8px!important
+}
+.shopItem{min-width:0!important;border-radius:3px!important}
+.productPhoto{height:132px!important}
+.shopInfo{min-height:55px!important;padding:8px!important}
+.shopInfo b{font-size:11px!important}.shopInfo small{font-size:7px!important}
+.shopPrice{font-size:11px!important;padding:8px!important}
+.cart{margin-top:12px!important}
+
+/* Reference orange */
+:root{--accent:#ff7600!important}
+button.primary,#startHeist{background:linear-gradient(180deg,#ff8a16,#ef6500)!important}
+.progress>i,.xpbar>i{background:#ff7600!important}
+@media(max-width:1550px){
+ .cards{grid-auto-rows:175px!important}.card{height:175px!important}.card .hero{height:140px!important}
+ .workspace{grid-template-columns:245px minmax(0,1fr)!important}
+}
+
+/* ==========================================================
+   V3.3.0 — REFERENCE REBUILD + CLOSE FIX
+   ========================================================== */
+#app.hidden{display:none!important}
+#profileModal.hidden,#atmMenu.hidden,#keypad.hidden{display:none!important}
+
+#app{display:flex!important;align-items:center!important;justify-content:center!important;background:rgba(0,0,0,.82)!important}
+.shell{
+ width:min(96vw,1536px)!important;
+ height:min(94vh,1024px)!important;
+ max-width:1536px!important;
+ border-radius:0!important;
+ border:1px solid #25292b!important;
+ background:#07090a!important;
+ overflow:hidden!important;
+}
+header{
+ height:68px!important;
+ grid-template-columns:290px 1fr 290px!important;
+ padding:0 20px!important;
+}
+.brandIcon{width:70px!important;height:48px!important;font-size:22px!important}
+.brand b{font-size:20px!important}
+.brand small{font-size:8px!important}
+.topnav button{min-width:140px!important;height:43px!important}
+.referenceClose{
+ min-width:42px!important;width:42px!important;height:42px!important;padding:0!important;
+ font-size:22px!important;border:1px solid #3a3e40!important;background:#0b0d0e!important;color:#fff!important
+}
+.workspace{
+ height:calc(100% - 68px)!important;
+ grid-template-columns:240px minmax(0,1fr)!important;
+}
+.social{background:linear-gradient(180deg,#0a0c0d 0%,#090b0c 58%,#0c0b09 100%)!important}
+.identity{height:220px!important;padding-top:22px!important}
+.avatar{width:108px!important;height:108px!important}
+.mainarea{padding:12px 14px 28px!important;overflow-y:auto!important}
+.sectionTitle{height:52px!important}
+.cards{
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:164px!important;
+ gap:8px!important;
+}
+.card{height:164px!important}
+.card .hero{height:130px!important}
+.heroTitle b{font-size:13px!important}
+.cardStatus{height:34px!important}
+.badge{font-size:8px!important}
+.details{display:none!important}
+
+/* Avatar strip on the same page, exactly like the supplied reference composition */
+.referenceAvatarSection,.referenceShopSection{margin-top:14px!important}
+.refHeading{display:flex;align-items:center;gap:9px;margin:0 0 8px;padding:0 4px}
+.refHeading>span{font-size:22px;filter:saturate(1.2)}
+.refHeading h2{margin:0;color:#fff;font-size:18px;line-height:1.05}
+.refHeading small{display:block;margin-top:3px;color:#8e9497;font-size:9px}
+.homeAvatarStrip{
+ min-height:112px;display:flex;align-items:center;gap:17px;padding:9px 18px;
+ border:1px solid #292d2f;background:#0a0c0d;border-radius:4px;overflow-x:auto
+}
+.homeAvatar{
+ flex:0 0 88px;width:88px;height:88px;border-radius:50%;cursor:pointer;
+ border:1px solid #6d3819;background-color:#111;background-size:cover;background-position:center;
+ box-shadow:inset 0 0 0 3px #0a0c0d;transition:.15s ease
+}
+.homeAvatar:hover{transform:translateY(-2px);border-color:#ff7a00}
+.homeAvatar.selected{width:98px;height:98px;flex-basis:98px;border:4px solid #ff7a00;box-shadow:0 0 0 3px #1a1009,0 0 24px rgba(255,122,0,.20)}
+
+.homeShopStrip{
+ display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:7px;
+}
+.homeShopItem{
+ min-width:0;padding:0;text-align:right;overflow:hidden;cursor:pointer;
+ border:1px solid #292d2f;border-radius:3px;background:#0d1011;color:#fff
+}
+.homeShopPic{
+ display:block;height:88px;background-size:cover;background-position:center;background-repeat:no-repeat;
+ border-bottom:1px solid #292d2f
+}
+.homeShopItem b{display:block;padding:7px 8px 2px;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.homeShopItem strong{display:block;padding:0 8px 7px;color:#ff8b21;font-size:10px}
+.homeShopItem:hover{border-color:#a95112;transform:translateY(-1px)}
+
+/* Full shop remains available from the header tab */
+.shopGrid{grid-template-columns:repeat(4,minmax(0,1fr))!important}
+.productPhoto{height:155px!important}
+
+/* Keep reference proportions on shorter ultrawide screens instead of stretching everything */
+@media(max-height:850px){
+ .shell{height:94vh!important;width:min(92vw,1380px)!important}
+ .workspace{grid-template-columns:215px minmax(0,1fr)!important}
+ .identity{height:185px!important;padding-top:12px!important}
+ .avatar{width:88px!important;height:88px!important}
+ .cards{grid-auto-rows:145px!important}
+ .card{height:145px!important}.card .hero{height:113px!important}.cardStatus{height:32px!important}
+ .homeAvatarStrip{min-height:96px!important}.homeAvatar{width:72px;height:72px;flex-basis:72px}.homeAvatar.selected{width:80px;height:80px;flex-basis:80px}
+ .homeShopPic{height:72px!important}
+}
+
+/* =========================================================
+ V3.4.0 PIXEL REFERENCE — mapped against supplied 1536x1024
+ ========================================================= */
+#app.hidden{display:none!important}
+.shell{width:1536px!important;height:1024px!important;max-width:96vw!important;max-height:96vh!important;aspect-ratio:3/2!important;background:#07090a!important}
+header{height:68px!important;grid-template-columns:300px 1fr 300px!important;padding:0 20px!important}
+.brand{gap:10px!important}
+.fdLogoMark{
+ position:relative!important;width:72px!important;height:50px!important;border:0!important;background:transparent!important;
+ box-shadow:none!important;transform:none!important;color:#ff7710!important;font-weight:1000!important;font-style:italic!important
+}
+.fdLogoMark .fdWing{font-size:39px!important;line-height:50px!important;letter-spacing:-14px!important;transform:skew(-12deg);display:inline-block}
+.fdLogoMark .fdD{font-size:38px!important;line-height:50px!important;display:inline-block;transform:skew(-12deg);margin-left:9px}
+.brand b{font-size:21px!important;letter-spacing:1px!important}.brand small{font-size:8px!important;letter-spacing:1.5px!important}
+.topnav{gap:8px!important}.topnav button{min-width:140px!important;height:43px!important;font-size:12px!important}
+.workspace{height:956px!important;grid-template-columns:240px 1fr!important}
+.social{border-right:1px solid #272b2d!important}
+.identity{height:218px!important;padding:20px 13px 12px!important}
+.avatar{width:110px!important;height:110px!important}
+.profileHead b{font-size:17px!important}.profileHead small{font-size:9px!important}
+.mainarea{padding:10px 14px 24px!important}
+.sectionTitle{height:52px!important;margin-bottom:9px!important;position:relative!important}
+.sectionTitle h2{font-size:20px!important}.sectionTitle small{font-size:10px!important}
+#search{position:absolute!important;right:164px!important;top:4px!important;width:238px!important;height:40px!important}
+.heistFilter{
+ position:absolute;right:0;top:4px;width:154px;height:40px;display:flex;align-items:center;justify-content:space-around;
+ background:#0e1112;color:#fff;border:1px solid #2b3032;border-radius:4px;font-size:11px;cursor:pointer;z-index:3
+}
+.heistFilter .funnel{font-size:14px;transform:rotate(90deg);color:#eee}.heistFilter .chev{font-size:16px;color:#aaa}
+.filterMenu{
+ position:absolute;z-index:9999;top:113px;right:27px;width:154px;padding:5px;background:#0b0e0f;border:1px solid #33383a;
+ box-shadow:0 14px 35px #000;border-radius:4px
+}
+.filterMenu.hidden{display:none!important}.filterMenu button{width:100%;padding:9px;text-align:right;background:#0d1011;color:#ddd;border:0;border-bottom:1px solid #222;cursor:pointer}
+.filterMenu button:hover{color:#ff831e;background:#15100c}
+
+.cards{grid-template-columns:repeat(5,1fr)!important;grid-auto-rows:164px!important;gap:8px!important}
+.card{height:164px!important;border-color:#33383a!important}.card .hero{height:130px!important}
+.heroTitle{bottom:7px!important}.heroTitle b{font-size:14px!important}.heroTitle small{font-size:7px!important}
+.cardStatus{height:34px!important}.badge{font-size:8px!important}
+.referenceAvatarSection{margin-top:12px!important}.referenceShopSection{margin-top:10px!important}
+.refHeading{height:48px!important;margin:0!important}.refHeading h2{font-size:20px!important}.refHeading small{font-size:10px!important}
+.homeAvatarStrip{height:128px!important;min-height:128px!important;padding:8px 18px!important;gap:17px!important}
+.homeAvatar{width:92px!important;height:92px!important;flex-basis:92px!important}
+.homeAvatar.selected{width:108px!important;height:108px!important;flex-basis:108px!important}
+.homeShopStrip{grid-template-columns:repeat(8,1fr)!important;gap:7px!important}
+.homeShopItem{height:130px!important}.homeShopPic{height:88px!important}.homeShopItem b{font-size:10px!important}.homeShopItem strong{font-size:10px!important}
+.referenceClose{position:absolute!important;right:18px!important;top:13px!important;width:42px!important;height:42px!important;z-index:10!important}
+
+/* reference sidebar navigation blocks */
+.social h3{font-size:10px!important}
+.ghost,.inviteLine input{height:42px!important}
+.chatSend{margin-top:auto!important}
+
+/* At 16:9/ultrawide, preserve reference aspect rather than stretching tiny UI across screen */
+@media (max-aspect-ratio: 3/2){.shell{width:96vw!important;height:auto!important}}
+@media (min-aspect-ratio: 3/2){.shell{height:96vh!important;width:auto!important}}
+
+/* =========================================================
+ V3.5.0 — TRUE REFERENCE FLOW FIX
+ Fixes inherited grid height that caused the giant blank area.
+ ========================================================= */
+#app.hidden{display:none!important}
+.shell{
+ width:min(1536px,96vw)!important;height:min(1024px,96vh)!important;
+ max-width:none!important;max-height:none!important;aspect-ratio:3/2!important;
+}
+header{
+ height:68px!important;display:grid!important;
+ grid-template-columns:280px minmax(500px,1fr) 280px!important;
+ direction:ltr!important
+}
+.referenceBrand{justify-self:start!important;width:230px!important;height:58px!important;display:flex!important;align-items:center!important}
+.referenceBrand img{width:225px!important;height:56px!important;object-fit:contain!important;object-position:left center!important}
+.topnav{justify-self:center!important;direction:rtl!important}
+.account{justify-self:end!important;direction:rtl!important}
+.workspace{
+ height:calc(100% - 68px)!important;
+ grid-template-columns:240px minmax(0,1fr)!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ overflow:hidden!important
+}
+.social{
+ height:100%!important;overflow:hidden!important;
+ background:linear-gradient(180deg,#090b0c 0%,#090b0c 58%,#0c0b09 100%)!important
+}
+.mainarea{
+ height:100%!important;box-sizing:border-box!important;
+ overflow-y:auto!important;overflow-x:hidden!important;
+ padding:10px 14px 24px!important;
+}
+.tabPane{height:auto!important;min-height:100%!important}
+#heists.tabPane{display:block!important}
+#heists.tabPane.hidden{display:none!important}
+.sectionTitle{height:52px!important;margin-bottom:9px!important}
+.cards{
+ height:auto!important;min-height:0!important;max-height:none!important;
+ overflow:visible!important;
+ display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+ grid-auto-rows:164px!important;gap:8px!important;align-content:start!important;
+ padding:0!important;margin:0!important
+}
+.card{height:164px!important}
+.card .hero{height:130px!important}
+.referenceAvatarSection{
+ display:block!important;clear:both!important;margin:12px 0 0!important;padding:0!important
+}
+.referenceShopSection{
+ display:block!important;clear:both!important;margin:10px 0 0!important;padding:0 0 12px!important
+}
+.refHeading{height:48px!important;margin:0!important}
+.homeAvatarStrip{height:128px!important;min-height:128px!important}
+.homeShopStrip{grid-template-columns:repeat(8,minmax(0,1fr))!important}
+.homeShopItem{height:130px!important}
+
+/* Reference search + filter position */
+.sectionTitle{position:relative!important}
+#search{right:164px!important;top:4px!important;width:238px!important;height:40px!important}
+.heistFilter{right:0!important;top:4px!important;width:154px!important;height:40px!important}
+
+/* No visible browser-like scrollbar beside the sidebar */
+.social::-webkit-scrollbar{display:none!important}
+.social{scrollbar-width:none!important}
+
+/* Close button must remain visible and clickable */
+.referenceClose{
+ position:absolute!important;right:18px!important;top:13px!important;
+ width:42px!important;height:42px!important;z-index:999!important;
+ pointer-events:auto!important
+}
+
+/* Keep the supplied reference scale on ultrawide FiveM displays */
+@media (min-aspect-ratio: 3/2){
+ .shell{height:min(96vh,1024px)!important;width:auto!important}
+}
+@media (max-aspect-ratio: 3/2){
+ .shell{width:min(96vw,1536px)!important;height:auto!important}
+}
+
+/* =========================================================
+ V3.6.0 — PROFESSIONAL POLISH
+ ========================================================= */
+
+/* Thin premium scrollbars instead of the wide white native bar */
+*{scrollbar-width:thin;scrollbar-color:#71370e #0a0c0d}
+*::-webkit-scrollbar{width:7px;height:7px}
+*::-webkit-scrollbar-track{background:#090b0c;border-radius:8px}
+*::-webkit-scrollbar-thumb{
+ background:linear-gradient(180deg,#a94d0d,#e66c12);
+ border:2px solid #090b0c;border-radius:10px
+}
+*::-webkit-scrollbar-thumb:hover{background:#ff7b16}
+.social{overflow-y:auto!important;scrollbar-width:thin!important}
+.social::-webkit-scrollbar{display:block!important;width:5px!important}
+
+/* Reliable FIVE DEV logo made entirely from local HTML/CSS */
+.referenceBrand{width:235px!important;height:58px!important;display:flex!important;align-items:center!important;gap:12px!important}
+.proFdLogo{
+ width:68px;height:45px;display:flex;align-items:center;justify-content:center;
+ transform:skew(-10deg);font-style:italic;font-weight:1000;color:#ff7410;
+ font-family:Arial Black,Arial,sans-serif;filter:drop-shadow(0 0 10px rgba(255,116,16,.16))
+}
+.proFdLogo span:first-child{font-size:39px;letter-spacing:-14px}
+.proFdLogo span:last-child{font-size:38px;margin-left:7px}
+.proBrandCopy{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+.proBrandCopy b{font:800 20px/1 Arial,sans-serif;letter-spacing:1.3px;color:#f6f6f6}
+.proBrandCopy small{margin-top:5px;font:600 8px/1 Arial,sans-serif;letter-spacing:2px;color:#8e9496}
+
+/* More readable/professional typography */
+body{font-family:Arial,"Noto Sans Hebrew",sans-serif!important}
+.sectionTitle h2,.refHeading h2{font-weight:800!important;letter-spacing:-.2px!important}
+.sectionTitle small,.refHeading small{font-size:10px!important;color:#9ca2a5!important}
+.heroTitle b{font-size:14px!important;font-weight:800!important;text-shadow:0 2px 4px #000!important}
+.heroTitle small{font-size:8px!important;letter-spacing:.45px!important;color:#b0b4b6!important}
+.cardStatus{font-size:9px!important;font-weight:700!important}
+.badge{font-size:9px!important;font-weight:700!important}
+.profileHead b{font-size:18px!important;font-weight:800!important}
+.social h3{font-size:10px!important;letter-spacing:.3px!important}
+.homeShopItem b{font-size:11px!important;font-weight:800!important}
+.homeShopItem strong{font-size:11px!important;font-weight:800!important}
+
+/* Better cards */
+.card{
+ overflow:hidden!important;border:1px solid #303638!important;
+ box-shadow:0 5px 16px rgba(0,0,0,.22)!important;
+ transition:border-color .16s ease,transform .16s ease,box-shadow .16s ease!important
+}
+.card:hover{transform:translateY(-2px)!important;border-color:#8b430f!important;box-shadow:0 8px 22px rgba(0,0,0,.38)!important}
+.card .hero{position:relative!important}
+.card.locked .hero:after{
+ content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.64));
+ z-index:4;pointer-events:none
+}
+.card.locked{border-color:#422724!important}
+.card.locked .heroTitle,.card.locked .badges{opacity:.48!important}
+
+/* High-quality visible lock for every level-locked robbery */
+.proLevelLock{
+ position:absolute;z-index:8;left:50%;top:50%;transform:translate(-50%,-50%);
+ min-width:82px;padding:8px 11px;display:flex;flex-direction:column;align-items:center;gap:2px;
+ background:rgba(8,9,10,.88);border:1px solid rgba(255,117,20,.72);border-radius:7px;
+ box-shadow:0 0 0 1px rgba(0,0,0,.6),0 7px 24px rgba(0,0,0,.55),0 0 18px rgba(255,117,20,.10);
+ backdrop-filter:blur(4px);pointer-events:none
+}
+.proLevelLock .lockIcon{font-size:21px;line-height:22px;filter:saturate(.7)}
+.proLevelLock b{font-size:10px;color:#ff8a25;line-height:1.1}
+.proLevelLock small{font-size:8px;color:#d4d7d8;white-space:nowrap}
+
+/* Cleaner avatar/shop framing */
+.homeAvatarStrip,.homeShopItem{border-color:#303638!important}
+.homeAvatar{box-shadow:inset 0 0 0 3px #080a0b,0 5px 15px rgba(0,0,0,.32)!important}
+.homeAvatar.selected{box-shadow:0 0 0 3px #1a1009,0 0 25px rgba(255,123,0,.28)!important}
+.homeShopItem{transition:.15s ease!important}
+.homeShopItem:hover{transform:translateY(-2px)!important;box-shadow:0 8px 18px rgba(0,0,0,.35)!important}
+
+/* Search/filter polish */
+#search,.heistFilter{border-color:#34393b!important;background:#0b0e0f!important}
+#search:focus{outline:none!important;border-color:#a65010!important;box-shadow:0 0 0 2px rgba(255,119,16,.08)!important}
+.heistFilter:hover{border-color:#8d450f!important;color:#ff8b27!important}
+
+/* =========================================================
+ V3.6.5 — HEIST INFORMATION + START CONTRACT PANEL
+ Keeps the PRO-POLISH layout and restores the missing gameplay controls.
+ ========================================================= */
+.heistDetailPanel{
+ display:block!important;position:absolute!important;z-index:120!important;
+ top:68px!important;right:0!important;bottom:0!important;width:min(520px,38vw)!important;
+ padding:0!important;background:#080a0b!important;border-top:0!important;border-left:1px solid #34393b!important;
+ transform:translateX(102%)!important;opacity:0!important;pointer-events:none!important;
+ transition:transform .22s ease,opacity .18s ease!important;overflow-y:auto!important;
+ box-shadow:-24px 0 70px rgba(0,0,0,.65)!important;direction:rtl!important
+}
+.heistDetailPanel.open{transform:translateX(0)!important;opacity:1!important;pointer-events:auto!important}
+.detailClose{position:absolute;z-index:5;top:12px;left:12px;width:36px;height:36px;border:1px solid #45494a;
+background:#0b0e0f;color:#eee;border-radius:5px;font-size:18px;cursor:pointer}
+.detailClose:hover{border-color:#ff7a13;color:#ff8b28}
+.heistDetailPanel #detailBody{display:block!important;height:auto!important}
+.heistDetailPanel #detailBody.hidden{display:none!important}
+.detailVisual{height:235px;background-size:cover;background-position:center;position:relative;border-bottom:1px solid #34393b}
+.detailVisualShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,4,4,.12),rgba(5,6,6,.3) 42%,#080a0b 100%)}
+.detailVisualTop{position:absolute;z-index:2;top:16px;right:18px;left:58px;display:flex;justify-content:space-between;align-items:center}
+.detailVisual .tag{font-size:9px;color:#ff9a43;border:1px solid #6d3511;background:#160d08;padding:6px 9px;border-radius:4px}
+.detailState{font-size:9px;font-weight:900;color:#8ce69b;border:1px solid #245e30;background:#0c1a10;padding:6px 9px;border-radius:4px}
+.detailState.lockedState{color:#ff756d;border-color:#6d2925;background:#1d0d0c}.detailState.busyState,.detailState.cooldownState{color:#ffad59;border-color:#704019;background:#1b120a}
+.detailVisualTitle{position:absolute;z-index:2;bottom:22px;right:20px;left:20px}
+.detailVisualTitle small{font-size:8px;letter-spacing:1.4px;color:#ff8121}.detailVisualTitle h1{font-size:27px;margin:5px 0 0;font-weight:900}
+.detailContent{padding:18px 20px 24px}.detailContent h3{font-size:14px;margin:0 0 7px}.detailAbout p{font-size:11px;line-height:1.7;color:#a5a8a8;margin:0}
+.heistDetailPanel .detailStats{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:6px!important;margin:16px 0!important}
+.heistDetailPanel .detailStats div{background:#0d1011!important;border:1px solid #303638!important;padding:10px 7px!important;border-radius:4px!important;text-align:center}
+.heistDetailPanel .detailStats small{font-size:7px!important;color:#8d9294!important}.heistDetailPanel .detailStats b{display:block;margin-top:4px;color:#ff8623!important;font-size:13px!important}
+.detailBriefing{border-top:1px solid #24292a;padding-top:15px}.detailBriefing>div small{font-size:8px;color:#7f8486}
+.heistDetailPanel #detailBrief{display:grid!important;gap:7px!important;margin:12px 0 16px!important;padding:0!important;list-style:none!important}
+.heistDetailPanel #detailBrief li{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;background:#0d1011;border:1px solid #292f31;border-radius:4px;padding:8px}
+.heistDetailPanel #detailBrief li span{width:30px;height:30px;display:grid;place-items:center;border:1px solid #7a3b0e;color:#ff8121;background:#160d08;border-radius:4px;font-size:9px;font-weight:900}
+.heistDetailPanel #detailBrief li p{margin:0;font-size:10px;color:#b5b8b9;line-height:1.45}
+.heistDetailPanel .detailActions{display:grid!important;grid-template-columns:1fr 1.8fr!important;gap:8px!important}
+.heistDetailPanel .detailActions button{height:48px!important;border-radius:4px!important;font-size:12px!important;font-weight:900!important;cursor:pointer}
+.heistDetailPanel #startHeist{background:linear-gradient(180deg,#ff8a19,#e86400)!important;color:#130800!important;border:1px solid #ff9a3c!important}
+.heistDetailPanel #startHeist:disabled{background:#17191a!important;color:#686d6f!important;border-color:#303638!important;cursor:not-allowed!important}
+.heistDetailPanel #endHeist{background:#111415!important;color:#c7c9ca!important;border:1px solid #353b3d!important}
+.detailHint{font-size:8px;color:#74797b;text-align:center;margin:9px 0 0}
+.detailEmpty{height:100%;min-height:400px;display:flex!important;align-items:center;justify-content:center;flex-direction:column;color:#a1a5a6}
+.detailEmpty small{margin-top:7px;color:#686d6f}
+@media(max-width:1100px){.heistDetailPanel{width:48vw!important}.heistDetailPanel .detailStats{grid-template-columns:repeat(3,1fr)!important}}
+
+/* V3.6.6 INLINE START — no secondary heist menu */
+.heistDetailPanel{display:none!important}
+.cards{grid-auto-rows:205px!important}
+.card{height:205px!important;display:flex!important;flex-direction:column!important}
+.card .hero{height:144px!important;flex:0 0 144px!important}
+.cardQuickInfo{height:25px;display:flex;align-items:center;justify-content:space-between;padding:0 9px;background:#0b0e0f;border-top:1px solid #252a2c;color:#969b9d;font-size:8px}
+.cardQuickInfo span:last-child{color:#ff8521;font-weight:900}
+.inlineStartBtn{height:36px;width:100%;border:0;border-top:1px solid #71350e;background:linear-gradient(180deg,#281408,#160c07);color:#ff8824;font-size:10px;font-weight:900;cursor:pointer}
+.inlineStartBtn:hover:not(:disabled){background:linear-gradient(180deg,#ff8b22,#e76500);color:#120800}
+.inlineStartBtn:disabled{background:#0d0f10;color:#626769;border-top-color:#2a2f31;cursor:not-allowed}
