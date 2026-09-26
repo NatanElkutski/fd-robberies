@@ -29,7 +29,9 @@
       "PowerShell(git add docs/superpowers/specs/2026-09-26-modular-refactor-design.md)",
       "PowerShell($env:npm_config_yes='true'; npx --yes @johnnymorganz/stylua-bin --version; \"---\"; \"local a = `adder`; a += 1; local b = t?.x\" | Out-File -Encoding ascii \"$env:TEMP\\\\cfx_test.lua\"; npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check \"$env:TEMP\\\\cfx_test.lua\"; \"exit: $LASTEXITCODE\")",
       "PowerShell(npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check \"C:\\\\Users\\\\natan\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\d--projects-fd-robberies\\\\735bd28f-1a68-4fb0-a920-b811ff431e2f\\\\scratchpad\\\\cfx_test.lua\"; \"exit: $LASTEXITCODE\"; npx --yes @johnnymorganz/stylua-bin --syntax CfxLua --check client.lua 2>&1 | Select-Object -First 5; \"exit: $LASTEXITCODE\")",
-      "PowerShell(git add -A)"
+      "PowerShell(git add -A)",
+      "PowerShell(gh api repos/overextended/ox_lib/contents/imports/locale/shared.lua --jq .content | % { [Text.Encoding]::UTF8.GetString\\([Convert]::FromBase64String\\($_\\)\\) })",
+      "PowerShell(node -e \"const f=\\(o,p=''\\)=>Object.entries\\(o\\).flatMap\\(\\([k,v]\\)=>typeof v==='object'&&!Array.isArray\\(v\\)?f\\(v,p+k+'.'\\):[p+k]\\);const he=f\\(require\\('./locales/he.json'\\)\\),en=f\\(require\\('./locales/en.json'\\)\\);console.log\\('he',he.length,'en',en.length,'missing in en:',he.filter\\(k=>!en.includes\\(k\\)\\),'missing in he:',en.filter\\(k=>!he.includes\\(k\\)\\)\\)\"; New-Item -ItemType Directory -Force sql | Out-Null; git mv install.sql sql/install.sql; npx --yes @johnnymorganz/stylua-bin config; npx --yes @johnnymorganz/stylua-bin --check config; \"stylua exit: $LASTEXITCODE\")"
     ]
   }
 }
