@@ -20,7 +20,7 @@ modules/    core/        NUI helpers, busy-guarded actions, banner, DB migration
             hub/         menu payload, contact NPC, open command
             shop/ location/ store/     one folder per feature
             atm/         server.lua + client/{state,rope,drill,explosive,menu}.lua
-web/src/    React UI (see below) → web/build (gitignored; build before testing or releasing)
+web/src/    React UI (see below) → web/build (committed so servers can run straight from git — rebuild and commit it with every web/src change)
 sql/        install.sql
 tools/      check.mjs  (events / locales / manifest / NUI protocol consistency)
 ```

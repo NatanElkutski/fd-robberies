@@ -53,8 +53,10 @@ local function openMenu(entity)
         return Bridge.Notify(locale('atm.in_use'), 'error')
     end
 
+    if not FD.Nui.Focus(true) then
+        return
+    end
     selectedAtm = entity
-    FD.Nui.Focus(true)
     FD.Nui.Send('atmMenu', { show = true })
 end
 

@@ -1,6 +1,7 @@
 {
   "notify": {
-    "title": "FIVE DEV | Robberies"
+    "title": "FIVE DEV | Robberies",
+    "ui_not_ready": "The menu failed to load. Contact the server staff."
   },
   "keys": {
     "open_hub": "Open Robbery Hub",

@@ -1,6 +1,7 @@
 {
   "notify": {
-    "title": "FIVE DEV | Robberies"
+    "title": "FIVE DEV | Robberies",
+    "ui_not_ready": "הממשק לא נטען. פנה להנהלת השרת."
   },
   "keys": {
     "open_hub": "פתח את מרכז השודים",

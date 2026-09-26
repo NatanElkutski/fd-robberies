@@ -6,6 +6,9 @@
 local DEFAULT_ANIM <const> = { dict = 'mini@repair', clip = 'fixing_a_ped', flag = 49 }
 
 local busy = false
+-- set when the NUI page has loaded and mounted (it posts 'ready'); focus is never taken before that,
+-- so a missing/broken UI build can't leave the player with a frozen mouse
+local uiReady = false
 
 FD.Nui = {}
 FD.Actions = {}
@@ -18,13 +21,43 @@ function FD.Nui.Send(action, payload)
     SendNUIMessage(message)
 end
 
+---@return boolean
+function FD.Nui.IsReady()
+    return uiReady
+end
+
+---Gives/releases mouse+keyboard focus. Refuses to take focus while the UI isn't loaded.
 ---@param enabled boolean
+---@return boolean focused
 function FD.Nui.Focus(enabled)
+    if enabled and not uiReady then
+        print(
+            ('^1[%s] The UI is not loaded. Build it with: cd web && npm install && npm run build, then refresh + ensure the resource.^7'):format(
+                FD.Resource
+            )
+        )
+        Bridge.Notify(locale('notify.ui_not_ready'), 'error')
+        return false
+    end
+
     SetNuiFocus(enabled, enabled)
     if enabled then
         SetNuiFocusKeepInput(false)
     end
+    return enabled
 end
+
+RegisterNUICallback('ready', function(_, cb)
+    uiReady = true
+    cb('ok')
+end)
+
+-- The UI crashed: release focus so the player isn't stuck.
+RegisterNUICallback('uiError', function(data, cb)
+    print(('^1[%s] UI error: %s^7'):format(FD.Resource, tostring(data?.message)))
+    SetNuiFocus(false, false)
+    cb('ok')
+end)
 
 ---Runs a progress bar unless another action is running.
 ---@param label? string

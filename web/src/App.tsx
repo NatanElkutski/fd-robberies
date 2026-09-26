@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { AtmMenu } from './features/atm';
-import { closeUi } from './features/hub';
+import { closeUi, markReady } from './features/hub';
 import { ProfileModal } from './features/profile';
 import { SafeKeypad } from './features/safe';
 import { useExitListener } from './hooks/useExitListener';
@@ -17,6 +18,10 @@ export function App() {
     void closeUi();
   };
   useExitListener(closeAll);
+
+  useEffect(() => {
+    void markReady();
+  }, []);
 
   return (
     <>

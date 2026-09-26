@@ -114,6 +114,8 @@ export type AtmMethod = 'rope' | 'explosive' | 'drill';
 export type PaymentMethod = 'cash' | 'bank';
 
 export interface NuiCallbacks {
+  ready: Record<string, never>;
+  uiError: { message: string };
   close: Record<string, never>;
   start: { id: string };
   endMission: Record<string, never>;
