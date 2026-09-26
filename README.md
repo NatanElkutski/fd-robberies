@@ -13,11 +13,8 @@ Exclusive QBCore robbery network by **FIVE DEV**: persistent XP and levels, crew
 ## Installation
 
 1. Put `fd-robberies` in your resources folder.
-2. Ensure the dependencies start before it, then add to `server.cfg`:
-   ```cfg
-   setr ox:locale "he"      # he | en — language of every text in the resource
-   ensure fd-robberies
-   ```
+2. Ensure the dependencies start before it, then add `ensure fd-robberies` to `server.cfg`.
+   The resource is in Hebrew by default; to switch to English set `locale = 'en'` in `config/shared.lua`.
 3. The database table is created automatically on start (`sql/install.sql` is included if you prefer to run it manually).
 4. Make sure every item used by the resource exists in your items list — see `ITEMS_TO_ADD.lua`.
 5. Adjust the configuration (below).

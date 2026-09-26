@@ -47,7 +47,9 @@ local function openSafe(storeId)
         return
     end
 
-    FD.Nui.Focus(true)
+    if not FD.Nui.Focus(true) then
+        return
+    end
     FD.Nui.Send('safeInput', { storeId = storeId, hint = hint, label = label })
 end
 

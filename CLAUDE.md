@@ -8,10 +8,10 @@ Before writing code, load the matching project skill in `.claude/skills/` (fivem
 ```
 fxmanifest.lua                         explicit load order (gameplay files are escrowed → no require)
 config/     shared.lua client.lua server.lua   open to customers; `return { ... }`, loaded with require('config.x')
-locales/    he.json en.json            open; every Lua and UI string (ox_lib locale, nested JSON)
+locales/    he.json en.json            open; every Lua and UI string (nested JSON, loaded by shared/locale.lua)
 bridge/     qb/client.lua qb/server.lua        framework adapter (only place QBCore is touched)
             client.lua server.lua              notify, progress, target, clothing wrappers
-shared/     init.lua (FD namespace) events.lua (FD.Events) utils.lua (FD.Utils) types.lua (annotations)
+shared/     init.lua (FD namespace) locale.lua (locale(), FD.Locale) events.lua (FD.Events) utils.lua (FD.Utils) types.lua (annotations)
 modules/    core/        NUI helpers, busy-guarded actions, banner, DB migration
             progress/    XP, levels, criminal profile
             rewards/     dirty-money payout with fallbacks (server)
@@ -20,10 +20,18 @@ modules/    core/        NUI helpers, busy-guarded actions, banner, DB migration
             hub/         menu payload, contact NPC, open command
             shop/ location/ store/     one folder per feature
             atm/         server.lua + client/{state,rope,drill,explosive,menu}.lua
-web/src/    React UI (see below) → web/build (gitignored; build before testing or releasing)
+web/src/    React UI (see below) → web/build (committed so servers can run straight from git — rebuild and commit it with every web/src change)
 sql/        install.sql
 tools/      check.mjs  (events / locales / manifest / NUI protocol consistency)
 ```
+
+## Language (strict) — this is a Hebrew FiveM server
+
+- **Every text a player sees or acts on is Hebrew**: NPC/target options, menus, tabs, buttons, titles, section headings, placeholders, hints, notifications, progress-bar labels, keybinding descriptions, briefings, errors. Hebrew is the default (`config/shared.lua` → `locale = 'he'`), and `locales/he.json` must be complete.
+- **English is allowed only for**: the brand (FIVE DEV, CRIMINAL NETWORK), GTA place/brand names (Vangelico, Paleto, Fleeca, Humane Labs…), technical tokens (ID, XP, ALT, E, GPS, USB, $), and small decorative code-name tags shown next to a Hebrew title (`robbery.*.subtitle`, `*.kicker`, `*.brand`). When unsure, use Hebrew.
+- Every new key goes into **both** `he.json` (Hebrew) and `en.json` (English). `tools/check.mjs` fails on a `he.json` value without Hebrew unless its key is allowlisted there — extend the allowlist only for the categories above.
+- The resource uses its own loader (`shared/locale.lua`), not ox_lib's `ox:locale` convar or per-player setting, so the configured language always wins.
+- Layout stays RTL (`dir="rtl"`); wrap mixed-direction fragments (IDs, prices, English names) so they don't flip.
 
 ## Lua rules (strict)
 

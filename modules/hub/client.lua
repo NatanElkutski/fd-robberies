@@ -35,13 +35,15 @@ function FD.Hub.Open()
         return
     end
 
-    FD.Nui.Focus(true)
+    if not FD.Nui.Focus(true) then
+        return
+    end
     FD.Nui.Send('open', {
         config = catalogue(data.xpRewards or {}),
         data = data,
         shop = data.shop,
         nearby = FD.Crew.Nearby(),
-        locale = lib.getLocales(),
+        locale = FD.Locale.All(),
     })
 end
 

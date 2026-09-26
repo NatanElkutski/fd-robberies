@@ -1,1 +1,1 @@
-export { closeUi } from './api';
+export { closeUi, markReady, reportUiError } from './api';

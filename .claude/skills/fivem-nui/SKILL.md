@@ -81,7 +81,7 @@ Players run 1280×720 up to 3440×1440 ultrawide. Design at 1920×1080 and scale
 
 ## 6. Hebrew / RTL
 
-This project's UI is Hebrew (`<html lang="he" dir="rtl">`, `<meta charset="UTF-8">`).
+This project runs on a **Hebrew server**: every text a player sees or acts on — menus, NPC/target options, buttons, headings, placeholders, notifications, progress labels, keybinding descriptions — must be Hebrew. English is only acceptable for the brand, GTA place names, technical tokens (ID, XP, ALT, $) and small decorative code-name tags beside a Hebrew title; when unsure, write Hebrew. The full rule and allowlist are in the repo's `CLAUDE.md` ("Language") and enforced by `tools/check.mjs`. Markup: `<html lang="he" dir="rtl">`, `<meta charset="UTF-8">`.
 - Use logical CSS (`margin-inline-start`, `padding-inline-end`, `inset-inline-start`, `text-align: start`) so layouts flip correctly; avoid mixing `direction: ltr` wrappers unless a specific grid needs it.
 - Wrap mixed-direction fragments (IDs, prices, English names, codes) in `<bdi>` or `unicode-bidi: isolate` so `ID 12` or `$1,500` doesn't render reversed.
 - Numbers: `toLocaleString('he-IL')` or `'en-US'` consistently; currency symbol placement consistent.

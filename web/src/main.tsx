@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import { reportUiError } from './features/hub';
 import { LocaleProvider } from './providers/LocaleProvider';
 import { StoreProvider } from './store/StoreProvider';
 import './theme/tokens.css';
@@ -14,10 +16,12 @@ if (isEnvBrowser()) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <StoreProvider>
-      <LocaleProvider>
-        <App />
-      </LocaleProvider>
-    </StoreProvider>
+    <ErrorBoundary onError={(error) => void reportUiError(error.message)}>
+      <StoreProvider>
+        <LocaleProvider>
+          <App />
+        </LocaleProvider>
+      </StoreProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );
