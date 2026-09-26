@@ -13,13 +13,12 @@ dependencies {
     'ox_lib',
 }
 
-ox_lib 'locale'
-
 -- Load order matters: shared → bridge → core modules → feature modules.
 -- Gameplay files are escrowed, so they are listed here instead of being require()d.
 shared_scripts {
     '@ox_lib/init.lua',
     'shared/init.lua',
+    'shared/locale.lua',
     'shared/events.lua',
     'shared/utils.lua',
     'shared/types.lua',

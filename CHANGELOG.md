@@ -6,7 +6,7 @@ Complete restructure of the resource. Gameplay, rewards, events and the database
 
 ### Upgrade notes (customers)
 - `config.lua` is replaced by three files: **`config/shared.lua`**, **`config/client.lua`**, **`config/server.lua`**. Re-apply your settings to the new files; names are grouped per feature (e.g. `Config.ATMMethodTime` → `config/client.lua` `atm.methodTime`, `Config.Robberies.<id>.rewards` → `config/server.lua` `robberies.<id>.reward`).
-- All texts moved to **`locales/he.json`** / **`locales/en.json`**. Select the language in `server.cfg` with `setr ox:locale "he"` (default is English).
+- All texts moved to **`locales/he.json`** / **`locales/en.json`**. Hebrew is the default; set `locale` in `config/shared.lua` to change it (the `ox:locale` convar is not used).
 - Integrations (notifications, progress bar, target, clothing, framework) are in the open **`bridge/`** folder.
 - The NUI moved from `html/` to `web/build/`.
 - Database table and item names are unchanged.

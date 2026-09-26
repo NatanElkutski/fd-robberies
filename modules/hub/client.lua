@@ -43,7 +43,7 @@ function FD.Hub.Open()
         data = data,
         shop = data.shop,
         nearby = FD.Crew.Nearby(),
-        locale = lib.getLocales(),
+        locale = FD.Locale.All(),
     })
 end
 

@@ -80,6 +80,14 @@ for (const [a, b] of [['he', 'en'], ['en', 'he']]) {
   for (const key of Object.keys(locales[a])) if (!(key in locales[b])) errors.push(`locales: "${key}" is in ${a}.json but missing in ${b}.json`);
 }
 
+// Hebrew server: every he.json value must contain Hebrew, except decorative English tags / technical tokens.
+const ENGLISH_ALLOWED = [/\.subtitle$/, /\.kicker$/, /\.brand$/, /^ui\.heists\.xp$/];
+for (const [key, value] of Object.entries(locales.he)) {
+  if (typeof value === 'string' && !/[֐-׿]/.test(value) && !ENGLISH_ALLOWED.some((re) => re.test(key))) {
+    errors.push(`locales: he.json "${key}" has no Hebrew ("${value}") — translate it or allowlist it in tools/check.mjs`);
+  }
+}
+
 const usedKeys = new Map();
 for (const [file, text] of Object.entries(lua)) {
   for (const key of matchAll(text, /locale\('([\w.]+)'/g)) usedKeys.set(key, file);

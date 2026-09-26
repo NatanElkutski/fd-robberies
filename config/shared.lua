@@ -18,6 +18,10 @@
 ---@field crew RobberyCrewSize
 
 return {
+    -- Language of every text in the resource (menus, NPC options, notifications): 'he' or 'en'.
+    -- Files: locales/<language>.json. Missing keys fall back to English.
+    locale = 'he',
+
     ---@type table<string, RobberyDefinition>
     robberies = {
         store = {
