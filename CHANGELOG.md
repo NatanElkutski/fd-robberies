@@ -1,5 +1,25 @@
 # Changelog
 
+## 4.1.0 — ATM robbery overhaul
+
+### Fixed
+- Taking the money from a ripped-out ATM never worked (map ATMs aren't networked, so the ATM was never registered) and the console was spammed with `NETWORK_GET_NETWORK_ID_FROM_ENTITY: no net object for entity`.
+- The towed ATM floated rigidly behind the car (or stayed standing in the street) instead of falling and dragging.
+- Only the crew leader could make the ripped ATM lootable; now whoever ripped it does.
+- Only the player who planted the charge could loot a blasted ATM; now the whole crew can.
+- Cancelling the rope attach kept the ATM locked for the rest of the crew.
+
+### New
+- Rope tow with real physics: when the ATM breaks off, the map ATM is hidden for every player and replaced by a networked ATM that tips, crashes to the ground, drags, bounces and throws sparks while towed. A watchdog keeps it behind the car if physics lose it.
+- The crew sees the tow rope too; players who join mid-robbery see the ATM removed from the wall.
+- Stop far enough away and the ATM unhooks and settles; every member loots their share with a cash-grab animation (server checks they're next to it).
+- If the tow vehicle is lost, the ATM stays on the ground and can be hooked to another vehicle (or looted if already far enough).
+- Drill and explosive methods got proper animations and props (heist drill with sparks, thermite charge, short fire after the blast).
+- When the contract ends, the ATM prop is removed and the wall ATM restored.
+
+### Config (config/client.lua → atm.rope)
+- Added `towRopeLength`, `ripImpulse`, `stopToDropMs`, `sparksMinSpeed`, `rescueExtraDistance`, `looseRehookDistance`.
+
 ## 4.0.0
 
 Complete restructure of the resource. Gameplay, rewards, events and the database are unchanged.

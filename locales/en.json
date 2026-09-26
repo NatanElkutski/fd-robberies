@@ -106,14 +106,16 @@
     "pull_ok": "Pull %d/%d worked. Stop the vehicle for a moment to set up the next pull.",
     "pull_final": "Pull %d/%d — the anchor broke!",
     "pull_ready": "Next pull ready (%d/%d). Accelerate to tighten the rope.",
-    "ripped": "The ATM was ripped off the wall. Drive somewhere remote and stop to set it down.",
-    "dropped": "Vehicle stopped. The ATM is on the ground — ALT on it to take the money.",
+    "ripped": "The ATM was ripped off the wall! Drag it somewhere remote and stop the vehicle to unhook it.",
+    "dropped": "The ATM is unhooked — ALT on it to take the money.",
     "tow_further": "Tow the ATM further before you can open it",
     "opening_towed": "Opening the ATM and taking your share...",
     "share_already_taken": "You already took your share from this ATM",
     "share_taken": "You took your share: %s. Return to the contact to close the contract and get XP.",
-    "rope_released": "The money was taken and the rope released from the vehicle.",
-    "all_looted": "Every crew member took their share. Return to the contact to finish the robbery."
+    "all_looted": "Every crew member took their share. Return to the contact to finish the robbery.",
+    "vehicle_lost": "The vehicle is gone and the ATM is on the ground. Hook it to another vehicle (E at the trunk).",
+    "rehooked": "ATM hooked to the vehicle. Keep towing.",
+    "rip_failed": "Couldn't rip the ATM out. Try pulling again."
   },
   "shop": {
     "item_not_defined": "Item %s is not defined in qb-core/shared/items.lua",
@@ -124,14 +126,38 @@
     "refunded": "No room in your inventory — payment refunded",
     "bought": "You bought %s for $%s",
     "items": {
-      "rope": { "label": "Tow rope", "description": "Needed to rip an ATM out with a vehicle." },
-      "lockpick": { "label": "Lockpick", "description": "For doors and vehicles during robberies." },
-      "thermite": { "label": "Thermite charge", "description": "For blowing ATMs and secured points." },
-      "drill": { "label": "Drill", "description": "For drilling ATMs and safes." },
-      "electronickit": { "label": "Electronic hacking kit", "description": "For security systems and hacking." },
-      "trojan_usb": { "label": "Hacking USB", "description": "For computers and bank systems." },
-      "screwdriverset": { "label": "Break-in tool set", "description": "For locks, warehouses and containers." },
-      "security_card_01": { "label": "Security card", "description": "For high-level targets." }
+      "rope": {
+        "label": "Tow rope",
+        "description": "Needed to rip an ATM out with a vehicle."
+      },
+      "lockpick": {
+        "label": "Lockpick",
+        "description": "For doors and vehicles during robberies."
+      },
+      "thermite": {
+        "label": "Thermite charge",
+        "description": "For blowing ATMs and secured points."
+      },
+      "drill": {
+        "label": "Drill",
+        "description": "For drilling ATMs and safes."
+      },
+      "electronickit": {
+        "label": "Electronic hacking kit",
+        "description": "For security systems and hacking."
+      },
+      "trojan_usb": {
+        "label": "Hacking USB",
+        "description": "For computers and bank systems."
+      },
+      "screwdriverset": {
+        "label": "Break-in tool set",
+        "description": "For locks, warehouses and containers."
+      },
+      "security_card_01": {
+        "label": "Security card",
+        "description": "For high-level targets."
+      }
     }
   },
   "robbery": {
@@ -139,91 +165,170 @@
       "label": "24/7 Store Robbery",
       "subtitle": "STORE HOLDUP",
       "description": "A contract for exactly three players. Once started, go to any store in the city, threaten the clerk with a weapon until he gives up, empty the registers and find the back safe. The safe has a 3-digit code and a unique hint.",
-      "briefing": ["Start the contract with a crew of exactly 3 players.", "Go to any 24/7 / LTD / Liquor store in the city.", "Aim a weapon at the clerk until he raises his hands.", "Once he surrenders you can rob the registers and shelves.", "Go to the back safe and get a hint for the 3-digit code.", "Enter the code on the keypad and collect the loot."]
+      "briefing": [
+        "Start the contract with a crew of exactly 3 players.",
+        "Go to any 24/7 / LTD / Liquor store in the city.",
+        "Aim a weapon at the clerk until he raises his hands.",
+        "Once he surrenders you can rob the registers and shelves.",
+        "Go to the back safe and get a hint for the 3-digit code.",
+        "Enter the code on the keypad and collect the loot."
+      ]
     },
     "atm": {
       "label": "ATM Breach",
       "subtitle": "ATM HIT",
       "description": "You have 10 minutes to reach any ATM in the city and pick one of three methods: drill, explosive, or ripping it out with a rope and a vehicle.",
-      "briefing": ["Start the ATM contract at the NPC.", "Find any ATM in the city.", "ALT on the ATM and pick: drill / bomb / rope and vehicle.", "The rope method needs a vehicle nearby.", "Finish before the 10-minute timer runs out."]
+      "briefing": [
+        "Start the ATM contract at the NPC.",
+        "Find any ATM in the city.",
+        "ALT on the ATM and pick: drill / bomb / rope and vehicle.",
+        "The rope method needs a vehicle nearby.",
+        "Finish before the 10-minute timer runs out."
+      ]
     },
     "house": {
       "label": "Luxury House Break-in",
       "subtitle": "LUXURY HOUSE",
       "description": "Break into a rich home in Vinewood. After starting at the contact, drive to the marked target and break into the loot point.",
-      "briefing": ["Start at the contact.", "Drive to the house marked on the GPS.", "Use third eye at the target point.", "Finish the break-in and collect the loot."]
+      "briefing": [
+        "Start at the contact.",
+        "Drive to the house marked on the GPS.",
+        "Use third eye at the target point.",
+        "Finish the break-in and collect the loot."
+      ]
     },
     "container": {
       "label": "Port Container Robbery",
       "subtitle": "PORT CONTAINER",
       "description": "A valuable shipment is waiting at the port. Start at the contact, drive to the port and open the marked container.",
-      "briefing": ["Get the job from the NPC.", "Drive to the container at the port.", "Use third eye at the container point.", "Open it and collect the goods."]
+      "briefing": [
+        "Get the job from the NPC.",
+        "Drive to the container at the port.",
+        "Use third eye at the container point.",
+        "Open it and collect the goods."
+      ]
     },
     "vehicle": {
       "label": "High-End Vehicle Theft",
       "subtitle": "HIGH-END VEHICLE",
       "description": "A contract to steal a luxury vehicle. Take the job, drive to the location and finish taking over the vehicle.",
-      "briefing": ["Get the contract from the NPC.", "Drive to the marked target.", "ALT at the vehicle point.", "Finish the takeover and escape."]
+      "briefing": [
+        "Get the contract from the NPC.",
+        "Drive to the marked target.",
+        "ALT at the vehicle point.",
+        "Finish the takeover and escape."
+      ]
     },
     "fleeca": {
       "label": "Fleeca Bank Robbery",
       "subtitle": "FLEECA BANK",
       "description": "A mid-size bank robbery. Start remotely at the contact, then drive to the marked bank.",
-      "briefing": ["Start at the NPC.", "Drive to the marked Fleeca.", "Take control of the bank.", "ALT at the vault point and finish the breach."]
+      "briefing": [
+        "Start at the NPC.",
+        "Drive to the marked Fleeca.",
+        "Take control of the bank.",
+        "ALT at the vault point and finish the breach."
+      ]
     },
     "jewelry": {
       "label": "Vangelico Robbery",
       "subtitle": "JEWELRY STORE",
       "description": "A jewelry robbery downtown. After taking the job, drive to the store and do the robbery point.",
-      "briefing": ["Take the job.", "Drive to Vangelico.", "Enter the store.", "ALT at the loot point and finish the robbery."]
+      "briefing": [
+        "Take the job.",
+        "Drive to Vangelico.",
+        "Enter the store.",
+        "ALT at the loot point and finish the robbery."
+      ]
     },
     "warehouse": {
       "label": "Warehouse Raid",
       "subtitle": "WAREHOUSE RAID",
       "description": "A raid on an industrial warehouse with a valuable shipment.",
-      "briefing": ["Start at the contact.", "Drive to the warehouse.", "Secure the area.", "ALT at the goods point."]
+      "briefing": [
+        "Start at the contact.",
+        "Drive to the warehouse.",
+        "Secure the area.",
+        "ALT at the goods point."
+      ]
     },
     "armored": {
       "label": "Armored Truck Robbery",
       "subtitle": "ARMORED TRANSPORT",
       "description": "A dangerous contract on an armored cash shipment.",
-      "briefing": ["Take the contract.", "Drive to the ambush point.", "Take control of the area.", "ALT at the cargo hold point."]
+      "briefing": [
+        "Take the contract.",
+        "Drive to the ambush point.",
+        "Take control of the area.",
+        "ALT at the cargo hold point."
+      ]
     },
     "yacht": {
       "label": "Yacht Heist",
       "subtitle": "YACHT HEIST",
       "description": "A luxury target out at sea with restricted access.",
-      "briefing": ["Take the job.", "Reach the yacht.", "Get on deck.", "ALT at the safe point."]
+      "briefing": [
+        "Take the job.",
+        "Reach the yacht.",
+        "Get on deck.",
+        "ALT at the safe point."
+      ]
     },
     "humane": {
       "label": "Humane Labs Raid",
       "subtitle": "LAB RAID",
       "description": "Infiltrate a secure facility and steal sensitive equipment.",
-      "briefing": ["Take the job.", "Infiltrate Humane Labs.", "Reach the lab.", "ALT at the equipment point."]
+      "briefing": [
+        "Take the job.",
+        "Infiltrate Humane Labs.",
+        "Reach the lab.",
+        "ALT at the equipment point."
+      ]
     },
     "bobcat": {
       "label": "Bobcat Security Robbery",
       "subtitle": "SECURITY DEPOT",
       "description": "A security depot with cash and sensitive equipment.",
-      "briefing": ["Take the contract.", "Reach Bobcat.", "Secure the compound.", "ALT at the storage point."]
+      "briefing": [
+        "Take the contract.",
+        "Reach Bobcat.",
+        "Secure the compound.",
+        "ALT at the storage point."
+      ]
     },
     "paleto": {
       "label": "Paleto Bank Robbery",
       "subtitle": "PALETO BANK",
       "description": "A big bank robbery up north with a high payout.",
-      "briefing": ["Take the job.", "Drive to Paleto Bank.", "Take control of the bank.", "ALT near the vault."]
+      "briefing": [
+        "Take the job.",
+        "Drive to Paleto Bank.",
+        "Take control of the bank.",
+        "ALT near the vault."
+      ]
     },
     "casino": {
       "label": "Casino Heist",
       "subtitle": "CASINO HEIST",
       "description": "An advanced operation against a heavily secured target.",
-      "briefing": ["Take the operation.", "Drive to the casino.", "Reach the target point.", "ALT and finish the job."]
+      "briefing": [
+        "Take the operation.",
+        "Drive to the casino.",
+        "Reach the target point.",
+        "ALT and finish the job."
+      ]
     },
     "pacific": {
       "label": "Pacific Standard",
       "subtitle": "FINAL HEIST",
       "description": "The biggest robbery in the system. For players who reached level 10.",
-      "briefing": ["Take the operation from the NPC.", "Drive to Pacific Standard.", "Take control of the bank.", "ALT near the main vault.", "Finish and escape."]
+      "briefing": [
+        "Take the operation from the NPC.",
+        "Drive to Pacific Standard.",
+        "Take control of the bank.",
+        "ALT near the main vault.",
+        "Finish and escape."
+      ]
     }
   },
   "ui": {

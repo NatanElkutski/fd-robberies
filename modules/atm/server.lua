@@ -1,12 +1,20 @@
 --[[
     ATM breach (server): method locking and item checks, drill/explosive payout,
-    and the rope flow (register ripped ATM, lootable state, per-member shares).
-    One ATM per contract.
+    and the rope flow. One ATM per contract.
+
+    Rope flow: when the ATM is ripped out, the puller's client hides the map ATM and spawns a
+    networked ATM prop in its place (map ATMs aren't networked, so they can't be synced or
+    looted by the crew). The server tracks that prop, hides the map ATM for every player
+    (including late joiners), and on contract end deletes the prop and restores the map ATM.
 ]]
 
 local config = require('config.server')
 
 local ATM <const> = 'atm'
+local LOOT_RANGE <const> = 6.0 -- max distance between the looter and the ripped ATM
+
+---@type { coords: vector3, model: integer }[] map ATMs currently hidden for everyone
+local hidden = {}
 
 ---@param src integer
 ---@return ActiveContract|nil
@@ -22,6 +30,37 @@ end
 local function requiredItem(method)
     return config.atmItems[method]
 end
+
+---@param contract ActiveContract
+---@param event string
+local function toCrew(contract, event, ...)
+    for member in pairs(contract.members) do
+        TriggerClientEvent(event, member, ...)
+    end
+end
+
+---@param value any
+---@return boolean
+local function isCoords(value)
+    local kind = type(value)
+    return (kind == 'vector3' or kind == 'table')
+        and tonumber(value.x) ~= nil
+        and tonumber(value.y) ~= nil
+        and tonumber(value.z) ~= nil
+end
+
+---@param src integer
+---@param netId integer
+---@return boolean inRange (true when the entity isn't known server-side yet)
+local function isNearEntity(src, netId)
+    local entity = NetworkGetEntityFromNetworkId(netId)
+    if entity == 0 or not DoesEntityExist(entity) then
+        return true
+    end
+    return #(GetEntityCoords(GetPlayerPed(src)) - GetEntityCoords(entity)) <= LOOT_RANGE
+end
+
+-- Callbacks ------------------------------------------------------------------
 
 lib.callback.register(FD.Events.Callback.CheckMethod, function(source, method)
     local contract = contractFor(source)
@@ -45,20 +84,19 @@ lib.callback.register(FD.Events.Callback.CheckMethod, function(source, method)
     return true
 end)
 
+-- Map ATMs hidden right now (for players who join or restart mid-robbery).
+lib.callback.register(FD.Events.Callback.GetHiddenAtms, function()
+    return hidden
+end)
+
+-- Method lock / items ---------------------------------------------------------
+
 RegisterNetEvent(FD.Events.Server.ReleaseAtmMethod, function()
     local src = source
     local contract = FD.Contracts.Get(ATM)
-    if contract and contract.atmInProgress == src and not contract.atmCompleted then
+    if contract and contract.atmInProgress == src and not contract.atmCompleted and not contract.ropeATM then
         contract.atmInProgress = nil
         contract.atmMethod = nil
-    end
-end)
-
-RegisterNetEvent(FD.Events.Server.ExplosiveReady, function()
-    local src = source
-    local contract = FD.Contracts.Get(ATM)
-    if contract and contract.atmInProgress == src and not contract.atmCompleted then
-        contract.explosiveReady = true
     end
 end)
 
@@ -74,23 +112,62 @@ RegisterNetEvent(FD.Events.Server.ConsumeAtmItem, function(method)
     end
 end)
 
-RegisterNetEvent(FD.Events.Server.RegisterRopeAtm, function(netId)
+-- Explosive --------------------------------------------------------------------
+
+RegisterNetEvent(FD.Events.Server.ExplosiveReady, function(coords)
+    local src = source
+    local contract = FD.Contracts.Get(ATM)
+    if not contract or contract.atmInProgress ~= src or contract.atmCompleted then
+        return
+    end
+
+    contract.explosiveReady = true
+    if isCoords(coords) then
+        -- every crew member can loot the blasted ATM, not only the one who planted the charge
+        toCrew(contract, FD.Events.Client.AtmBlasted, vec3(coords.x, coords.y, coords.z))
+    end
+end)
+
+-- Rope -------------------------------------------------------------------------
+
+---Called by the puller once the ATM is ripped out and replaced by a networked prop.
+RegisterNetEvent(FD.Events.Server.RegisterRopeAtm, function(netId, coords, model)
     local src = source
     local contract = contractFor(src)
-    if not contract or contract.atmCompleted then
+    if not contract or contract.atmCompleted or contract.atmInProgress ~= src then
         return
     end
 
-    netId = tonumber(netId)
-    if not netId or netId <= 0 then
+    netId, model = tonumber(netId), tonumber(model)
+    if not netId or netId <= 0 or not model or not isCoords(coords) then
         return
     end
 
+    local position = vec3(coords.x, coords.y, coords.z)
     contract.ropeATM = netId
+    contract.ropeOwner = src
     contract.ropeLooted = {}
     contract.ropeLootable = false
+    contract.hiddenAtm = { coords = position, model = model }
+
+    hidden[#hidden + 1] = contract.hiddenAtm
+    TriggerClientEvent(FD.Events.Client.HideAtm, -1, position, model)
+    toCrew(contract, FD.Events.Client.CrewRopeAtm, netId)
+end)
+
+---Mirrors the tow rope for the rest of the crew (vehicleNetId = nil clears it).
+RegisterNetEvent(FD.Events.Server.RopeTowSync, function(vehicleNetId)
+    local src = source
+    local contract = contractFor(src)
+    if not contract or contract.ropeOwner ~= src or not contract.ropeATM then
+        return
+    end
+
+    vehicleNetId = tonumber(vehicleNetId)
     for member in pairs(contract.members) do
-        TriggerClientEvent(FD.Events.Client.CrewRopeAtm, member, netId)
+        if member ~= src then
+            TriggerClientEvent(FD.Events.Client.CrewRopeTow, member, vehicleNetId, contract.ropeATM)
+        end
     end
 end)
 
@@ -98,25 +175,26 @@ RegisterNetEvent(FD.Events.Server.RopeLootable, function(netId)
     local src = source
     local contract = FD.Contracts.Get(ATM)
     netId = tonumber(netId)
-    if not contract or contract.owner ~= src or contract.ropeATM ~= netId then
+    if not contract or contract.ropeOwner ~= src or contract.ropeATM ~= netId then
         return
     end
 
     contract.ropeLootable = true
-    for member in pairs(contract.members) do
-        TriggerClientEvent(FD.Events.Client.CrewRopeLootable, member, netId)
-    end
+    toCrew(contract, FD.Events.Client.CrewRopeLootable, netId)
 end)
 
 RegisterNetEvent(FD.Events.Server.RopeLoot, function(netId)
     local src = source
     local contract = contractFor(src)
     netId = tonumber(netId)
-    if not contract or not Bridge.GetPlayer(src) or contract.expires < os.time() then
+    if not netId or not contract or not Bridge.GetPlayer(src) or contract.expires < os.time() then
         return
     end
     if contract.ropeATM ~= netId or not contract.ropeLootable then
         return
+    end
+    if not isNearEntity(src, netId) then
+        return Bridge.Notify(src, locale('atm.too_far'), 'error')
     end
 
     contract.ropeLooted = contract.ropeLooted or {}
@@ -137,16 +215,21 @@ RegisterNetEvent(FD.Events.Server.RopeLoot, function(netId)
 
     contract.atmCompleted = true
     contract.atmInProgress = nil
-    contract.ropeDetached = true
     Bridge.Notify(src, locale('atm.share_taken', amount), 'success')
 
+    local everyone = true
     for member in pairs(contract.members) do
-        TriggerClientEvent(FD.Events.Client.DetachRopeAfterLoot, member, netId)
-        TriggerClientEvent(FD.Events.Client.RopeAllLooted, member, netId)
+        if not contract.ropeLooted[member] then
+            everyone = false
+        end
+    end
+    if everyone then
+        toCrew(contract, FD.Events.Client.RopeAllLooted, netId)
     end
 end)
 
--- Drill and explosive finish through FD.Events.Server.Complete.
+-- Drill / explosive payout (FD.Events.Server.Complete) -----------------------------
+
 FD.Contracts.OnComplete(ATM, function(src, id, method, contract)
     if contract.atmCompleted then
         return Bridge.Notify(src, locale('atm.already_robbed_xp'), 'error')
@@ -175,4 +258,46 @@ FD.Contracts.OnComplete(ATM, function(src, id, method, contract)
     contract.actions['atm:completed'] = true
     contract.objectiveDone = true
     Bridge.Notify(src, locale('atm.robbed', amount), 'success')
+end)
+
+-- Contract end: delete the ripped ATM prop and bring the map ATM back ----------------
+
+---@param record { coords: vector3, model: integer }
+local function restore(record)
+    for index, entry in ipairs(hidden) do
+        if entry == record then
+            table.remove(hidden, index)
+            break
+        end
+    end
+    TriggerClientEvent(FD.Events.Client.RestoreAtm, -1, record.coords, record.model)
+end
+
+FD.Contracts.OnClose(function(id, contract)
+    if id ~= ATM then
+        return
+    end
+
+    if contract.ropeATM then
+        local entity = NetworkGetEntityFromNetworkId(contract.ropeATM)
+        if entity ~= 0 and DoesEntityExist(entity) then
+            DeleteEntity(entity)
+        end
+    end
+    if contract.hiddenAtm then
+        restore(contract.hiddenAtm)
+    end
+end)
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= FD.Resource then
+        return
+    end
+    local contract = FD.Contracts.Get(ATM)
+    if contract?.ropeATM then
+        local entity = NetworkGetEntityFromNetworkId(contract.ropeATM)
+        if entity ~= 0 and DoesEntityExist(entity) then
+            DeleteEntity(entity)
+        end
+    end
 end)
