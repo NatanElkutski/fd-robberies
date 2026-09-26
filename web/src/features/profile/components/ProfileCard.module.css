@@ -1,0 +1,77 @@
+.identity {
+  height: 218px;
+  padding: 20px 13px 12px;
+  text-align: center;
+  background: linear-gradient(180deg, #0c0f10, #090b0c);
+  border-bottom: 1px solid var(--fd-line);
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.head small {
+  font-size: 9px;
+  color: #8a867f;
+}
+
+.head b {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.avatar {
+  width: 110px;
+  height: 110px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid var(--fd-orange);
+  background-color: #111;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 4px #111, 0 0 22px rgba(255, 120, 0, 0.14);
+}
+
+.edit {
+  margin-top: 3px;
+  padding: 5px 12px;
+  font-size: 9px;
+  color: #ff9838;
+  background: #1b1009;
+  border: 1px solid #67340f;
+  border-radius: var(--fd-radius);
+}
+
+.levelRow {
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #d9d4cc;
+}
+
+.levelRow span:first-child {
+  color: #ff9a35;
+}
+
+.levelRow i {
+  font-style: normal;
+}
+
+.xp {
+  height: 5px;
+  margin-top: 7px;
+  overflow: hidden;
+  background: #27251f;
+  border-radius: 8px;
+}
+
+.xp em {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #d85200, #ff9d2e);
+}

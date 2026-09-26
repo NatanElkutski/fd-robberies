@@ -1,0 +1,323 @@
+{
+  "notify": {
+    "title": "FIVE DEV | Robberies"
+  },
+  "keys": {
+    "open_hub": "Open Robbery Hub",
+    "briefing": "Robbery briefing"
+  },
+  "actions": {
+    "default": "Working..."
+  },
+  "hub": {
+    "outfit_worn": "You put on the robbery outfit"
+  },
+  "target": {
+    "open_menu": "Open robbery menu",
+    "exit_contract": "Finish / leave the active robbery",
+    "wear_outfit": "Wear robbery outfit",
+    "clothing": "Robbery clothing",
+    "atm_methods": "ATM breach options",
+    "atm_loot_towed": "Take money from the ripped ATM",
+    "atm_loot_blasted": "Take money from the blasted ATM",
+    "store_register": "Rob the register",
+    "store_shelf": "Steal dirty money from the shelf",
+    "store_safe": "Try to open the safe",
+    "location_action": "Do %s"
+  },
+  "profile": {
+    "name_too_short": "Your criminal name must be at least 3 characters",
+    "saved": "Criminal profile saved"
+  },
+  "crew": {
+    "player_offline": "That player is not online",
+    "only_leader_invite": "Only the crew leader can invite",
+    "already_in_crew": "That player is already in another crew",
+    "invite_received": "You got a robbery crew invite from %s [ID %s]",
+    "invite_expired": "That invite is no longer available",
+    "leave_current_first": "Leave your current crew first",
+    "joined": "You joined the robbery crew",
+    "cannot_leave_active": "You can't leave the crew during an active robbery",
+    "disbanded": "The crew leader disbanded the crew"
+  },
+  "contract": {
+    "only_leader_start": "Only the crew leader can start a robbery",
+    "crew_has_active": "Your crew already has an active robbery",
+    "locked": "This robbery is locked. Level %s required",
+    "in_progress": "Someone is already doing this robbery",
+    "on_cooldown": "This robbery is still on cooldown",
+    "not_enough_police": "Not enough police on duty",
+    "crew_too_small": "This robbery needs at least %d players. Your crew has %d.",
+    "crew_too_big": "This robbery allows at most %d players. Your crew has %d.",
+    "other_running": "Another robbery is already running on the server",
+    "only_leader_close": "Only the crew leader can close the contract",
+    "closed_xp": "Contract closed. You earned %s XP",
+    "no_active": "You have no active robbery",
+    "leader_left": "The crew leader disconnected and the robbery was cancelled",
+    "timed_out": "Time ran out and the contract was closed",
+    "started_atm": "Find any ATM in the city. ALT on it and pick a breach method.",
+    "started_store": "Go to a store and aim a weapon at the clerk.",
+    "started_location": "The target is marked on your GPS."
+  },
+  "location": {
+    "performing": "Doing the robbery...",
+    "completed": "Objective complete. You received %s dirty money."
+  },
+  "store": {
+    "aim_first": "Aim a weapon at the clerk first",
+    "control_first": "Take control of the clerk first",
+    "clerk_surrendered": "The clerk surrendered! You can rob the store.",
+    "emptying_register": "Emptying the register...",
+    "collecting_shelf": "Collecting dirty money...",
+    "opening_safe": "Opening the safe...",
+    "already_looted": "You already looted this spot",
+    "wrong_code": "Wrong code",
+    "collected": "You collected %s dirty money",
+    "hint_1": "The first digit is %s, the last two digits add up to %d",
+    "hint_2": "The middle digit is %s, the code is between %d and %d",
+    "hint_3": "The last digit is %s, all digits add up to %d"
+  },
+  "atm": {
+    "no_active": "You don't have an active ATM contract",
+    "already_robbed_return": "An ATM was already robbed on this contract. Return to the contact and close it.",
+    "already_robbed_xp": "An ATM was already robbed on this contract. Return to the contact to get XP.",
+    "member_in_progress": "A crew member is already breaching an ATM on this contract.",
+    "missing_item": "You're missing the item: %s",
+    "missing_gear": "Missing equipment",
+    "missing_rope": "Missing rope",
+    "not_found": "Couldn't identify the ATM",
+    "too_far": "You're too far from the ATM",
+    "in_use": "This ATM is already in use",
+    "not_yours": "This ATM doesn't belong to your crew's robbery",
+    "drilling": "Drilling the ATM...",
+    "planting": "Planting the charge on the ATM...",
+    "countdown": "Explosion in %d seconds — get back!",
+    "blasted": "The ATM is open. Go back and ALT on it to take the money.",
+    "collecting": "Collecting the money from the ATM...",
+    "robbed": "ATM robbed, you received %s. Now return to the contact, close the contract and get XP.",
+    "reward_failed": "Couldn't give the reward. Check dirtymoney/CASH in the inventory.",
+    "reward_failed_inventory": "Couldn't put the reward in your inventory. Check the dirtymoney/CASH setup.",
+    "rope_already": "A rope is already attached to an ATM",
+    "attaching_rope": "Attaching the rope to the ATM...",
+    "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to the back of a vehicle and press E to attach it.",
+    "attach_hook_prompt": "[E] Attach hook and rope to vehicle",
+    "hook_attached": "Hook and rope attached. Do %d hard pulls with the vehicle.",
+    "pull_ok": "Pull %d/%d worked. Stop the vehicle for a moment to set up the next pull.",
+    "pull_final": "Pull %d/%d — the anchor broke!",
+    "pull_ready": "Next pull ready (%d/%d). Accelerate to tighten the rope.",
+    "ripped": "The ATM was ripped off the wall. Drive somewhere remote and stop to set it down.",
+    "dropped": "Vehicle stopped. The ATM is on the ground — ALT on it to take the money.",
+    "tow_further": "Tow the ATM further before you can open it",
+    "opening_towed": "Opening the ATM and taking your share...",
+    "share_already_taken": "You already took your share from this ATM",
+    "share_taken": "You took your share: %s. Return to the contact to close the contract and get XP.",
+    "rope_released": "The money was taken and the rope released from the vehicle.",
+    "all_looted": "Every crew member took their share. Return to the contact to finish the robbery."
+  },
+  "shop": {
+    "item_not_defined": "Item %s is not defined in qb-core/shared/items.lua",
+    "not_enough_bank": "You don't have enough money in the bank",
+    "not_enough_cash": "You don't have enough CASH in your inventory",
+    "payment_failed": "Payment failed",
+    "payment_disabled": "This payment method is not available",
+    "refunded": "No room in your inventory — payment refunded",
+    "bought": "You bought %s for $%s",
+    "items": {
+      "rope": { "label": "Tow rope", "description": "Needed to rip an ATM out with a vehicle." },
+      "lockpick": { "label": "Lockpick", "description": "For doors and vehicles during robberies." },
+      "thermite": { "label": "Thermite charge", "description": "For blowing ATMs and secured points." },
+      "drill": { "label": "Drill", "description": "For drilling ATMs and safes." },
+      "electronickit": { "label": "Electronic hacking kit", "description": "For security systems and hacking." },
+      "trojan_usb": { "label": "Hacking USB", "description": "For computers and bank systems." },
+      "screwdriverset": { "label": "Break-in tool set", "description": "For locks, warehouses and containers." },
+      "security_card_01": { "label": "Security card", "description": "For high-level targets." }
+    }
+  },
+  "robbery": {
+    "store": {
+      "label": "24/7 Store Robbery",
+      "subtitle": "STORE HOLDUP",
+      "description": "A contract for exactly three players. Once started, go to any store in the city, threaten the clerk with a weapon until he gives up, empty the registers and find the back safe. The safe has a 3-digit code and a unique hint.",
+      "briefing": ["Start the contract with a crew of exactly 3 players.", "Go to any 24/7 / LTD / Liquor store in the city.", "Aim a weapon at the clerk until he raises his hands.", "Once he surrenders you can rob the registers and shelves.", "Go to the back safe and get a hint for the 3-digit code.", "Enter the code on the keypad and collect the loot."]
+    },
+    "atm": {
+      "label": "ATM Breach",
+      "subtitle": "ATM HIT",
+      "description": "You have 10 minutes to reach any ATM in the city and pick one of three methods: drill, explosive, or ripping it out with a rope and a vehicle.",
+      "briefing": ["Start the ATM contract at the NPC.", "Find any ATM in the city.", "ALT on the ATM and pick: drill / bomb / rope and vehicle.", "The rope method needs a vehicle nearby.", "Finish before the 10-minute timer runs out."]
+    },
+    "house": {
+      "label": "Luxury House Break-in",
+      "subtitle": "LUXURY HOUSE",
+      "description": "Break into a rich home in Vinewood. After starting at the contact, drive to the marked target and break into the loot point.",
+      "briefing": ["Start at the contact.", "Drive to the house marked on the GPS.", "Use third eye at the target point.", "Finish the break-in and collect the loot."]
+    },
+    "container": {
+      "label": "Port Container Robbery",
+      "subtitle": "PORT CONTAINER",
+      "description": "A valuable shipment is waiting at the port. Start at the contact, drive to the port and open the marked container.",
+      "briefing": ["Get the job from the NPC.", "Drive to the container at the port.", "Use third eye at the container point.", "Open it and collect the goods."]
+    },
+    "vehicle": {
+      "label": "High-End Vehicle Theft",
+      "subtitle": "HIGH-END VEHICLE",
+      "description": "A contract to steal a luxury vehicle. Take the job, drive to the location and finish taking over the vehicle.",
+      "briefing": ["Get the contract from the NPC.", "Drive to the marked target.", "ALT at the vehicle point.", "Finish the takeover and escape."]
+    },
+    "fleeca": {
+      "label": "Fleeca Bank Robbery",
+      "subtitle": "FLEECA BANK",
+      "description": "A mid-size bank robbery. Start remotely at the contact, then drive to the marked bank.",
+      "briefing": ["Start at the NPC.", "Drive to the marked Fleeca.", "Take control of the bank.", "ALT at the vault point and finish the breach."]
+    },
+    "jewelry": {
+      "label": "Vangelico Robbery",
+      "subtitle": "JEWELRY STORE",
+      "description": "A jewelry robbery downtown. After taking the job, drive to the store and do the robbery point.",
+      "briefing": ["Take the job.", "Drive to Vangelico.", "Enter the store.", "ALT at the loot point and finish the robbery."]
+    },
+    "warehouse": {
+      "label": "Warehouse Raid",
+      "subtitle": "WAREHOUSE RAID",
+      "description": "A raid on an industrial warehouse with a valuable shipment.",
+      "briefing": ["Start at the contact.", "Drive to the warehouse.", "Secure the area.", "ALT at the goods point."]
+    },
+    "armored": {
+      "label": "Armored Truck Robbery",
+      "subtitle": "ARMORED TRANSPORT",
+      "description": "A dangerous contract on an armored cash shipment.",
+      "briefing": ["Take the contract.", "Drive to the ambush point.", "Take control of the area.", "ALT at the cargo hold point."]
+    },
+    "yacht": {
+      "label": "Yacht Heist",
+      "subtitle": "YACHT HEIST",
+      "description": "A luxury target out at sea with restricted access.",
+      "briefing": ["Take the job.", "Reach the yacht.", "Get on deck.", "ALT at the safe point."]
+    },
+    "humane": {
+      "label": "Humane Labs Raid",
+      "subtitle": "LAB RAID",
+      "description": "Infiltrate a secure facility and steal sensitive equipment.",
+      "briefing": ["Take the job.", "Infiltrate Humane Labs.", "Reach the lab.", "ALT at the equipment point."]
+    },
+    "bobcat": {
+      "label": "Bobcat Security Robbery",
+      "subtitle": "SECURITY DEPOT",
+      "description": "A security depot with cash and sensitive equipment.",
+      "briefing": ["Take the contract.", "Reach Bobcat.", "Secure the compound.", "ALT at the storage point."]
+    },
+    "paleto": {
+      "label": "Paleto Bank Robbery",
+      "subtitle": "PALETO BANK",
+      "description": "A big bank robbery up north with a high payout.",
+      "briefing": ["Take the job.", "Drive to Paleto Bank.", "Take control of the bank.", "ALT near the vault."]
+    },
+    "casino": {
+      "label": "Casino Heist",
+      "subtitle": "CASINO HEIST",
+      "description": "An advanced operation against a heavily secured target.",
+      "briefing": ["Take the operation.", "Drive to the casino.", "Reach the target point.", "ALT and finish the job."]
+    },
+    "pacific": {
+      "label": "Pacific Standard",
+      "subtitle": "FINAL HEIST",
+      "description": "The biggest robbery in the system. For players who reached level 10.",
+      "briefing": ["Take the operation from the NPC.", "Drive to Pacific Standard.", "Take control of the bank.", "ALT near the main vault.", "Finish and escape."]
+    }
+  },
+  "ui": {
+    "common": {
+      "cancel": "Cancel",
+      "close": "Close",
+      "level": "Level"
+    },
+    "tabs": {
+      "heists": "☠ Robberies",
+      "shop": "▣ Gear shop"
+    },
+    "profile": {
+      "unknown": "UNKNOWN",
+      "identity": "Criminal identity",
+      "edit": "Edit identity",
+      "kicker": "CRIMINAL IDENTITY",
+      "title": "Build your identity",
+      "hint": "This name and face are shown in your Crew and in the underground chat.",
+      "name_label": "Criminal name",
+      "name_placeholder": "e.g. BLACK FOX",
+      "face_label": "Pick a face",
+      "save": "Save identity"
+    },
+    "crew": {
+      "title": "CREW • My crew",
+      "empty": "No members",
+      "server_id": "Server ID",
+      "find_nearby": "Find nearby players",
+      "accept": "Accept",
+      "leave": "Leave / disband crew"
+    },
+    "chat": {
+      "title": "UNDERGROUND CHAT",
+      "placeholder": "Write a message...",
+      "meta": "Level • ID %s",
+      "invite": "Invite to crew"
+    },
+    "heists": {
+      "title": "Job board",
+      "subtitle": "Pick a contract and prepare your crew",
+      "search": "Search robberies...",
+      "available": "Available",
+      "level_required": "Level %s required",
+      "busy": "Active for another crew",
+      "cooldown": "Cooldown %s",
+      "btn_locked": "🔒 Level %s",
+      "btn_active": "Robbery active",
+      "btn_start": "Start robbery",
+      "xp": "⭐ +%s XP",
+      "locked": "Locked",
+      "lock_level": "Level %s"
+    },
+    "avatars": {
+      "title": "Pick your avatar",
+      "subtitle": "Choose the face that represents you in the underworld",
+      "pick": "Pick avatar"
+    },
+    "home_shop": {
+      "title": "Black market",
+      "subtitle": "Buy gear that helps you on missions"
+    },
+    "shop": {
+      "title": "BLACK MARKET",
+      "subtitle": "Specialist gear for operations",
+      "cart": "Gear cart",
+      "cart_empty": "The cart is empty",
+      "total": "Total",
+      "pay_cash": "💵 Pay CASH",
+      "pay_bank": "🏦 Pay by bank"
+    },
+    "mission": {
+      "expand_hint": "to expand the panel",
+      "progress": "Progress",
+      "active_contract": "Active contract",
+      "default_objective": "Complete the robbery objectives",
+      "briefing": "Operation briefing",
+      "steps": "Mission steps"
+    },
+    "atm": {
+      "kicker": "ATM BREACH",
+      "title": "Pick a breach method",
+      "rope": "🪢 Rope + vehicle",
+      "rope_hint": "Rip, tow and empty",
+      "explosive": "💣 Thermite charge",
+      "explosive_hint": "Requires Thermite",
+      "drill": "🛠️ Drill",
+      "drill_hint": "Requires Drill"
+    },
+    "safe": {
+      "brand": "FIVE DEV • SAFE SECURITY",
+      "title": "Safe",
+      "confirm": "Confirm",
+      "hint_title": "Code hint",
+      "hint_footer": "The code has 3 digits"
+    }
+  }
+}

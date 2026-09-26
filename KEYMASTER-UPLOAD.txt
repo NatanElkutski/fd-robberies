@@ -1,22 +1,38 @@
-FD-robberies - Cfx.re Asset Escrow upload guide
-================================================
+FD-robberies - Cfx.re Asset Escrow upload guide (internal)
+==========================================================
 
-1. Keep this source package as a private, unencrypted backup.
-2. Upload the ZIP from the FIVE DEV owner account at https://portal.cfx.re/.
-3. Open Created Assets, choose Create an asset, and name it FD-robberies.
-4. Upload the ZIP and wait for Cfx.re processing.
-5. Download and test the encrypted build on an entitled server.
-6. For sales, attach this FiveM Asset to the matching Tebex package.
+Build the release ZIP
+---------------------
+1. Bump `version` in fxmanifest.lua and add a CHANGELOG.md entry.
+2. Build the UI:            cd web && npm ci && npm run build        (creates web/build)
+3. Run the checks:          node tools/check.mjs
+                            npx @johnnymorganz/stylua-bin --check .
+4. Stage a clean copy named exactly `fd-robberies` WITHOUT development files and zip it:
+
+   $out = "$env:TEMP\fd-robberies"; Remove-Item $out -Recurse -Force -ErrorAction Ignore
+   robocopy . $out /E /XD .git .claude .github .vscode docs tools node_modules web\src web\public web\node_modules /XF KEYMASTER-UPLOAD.txt CLAUDE.md stylua.toml .styluaignore .editorconfig .luarc.json .gitattributes .gitignore web\package.json web\package-lock.json web\tsconfig.json web\vite.config.ts web\eslint.config.js web\index.html web\.gitignore
+   Compress-Archive -Path $out -DestinationPath ".\fd-robberies-v<version>.zip" -Force
+
+   The ZIP must contain: fxmanifest.lua, config/, locales/, bridge/, shared/, modules/, sql/,
+   web/build/, ITEMS_TO_ADD.lua, README.md, CHANGELOG.md, LICENSE.txt.
+
+Upload
+------
+1. Keep the unencrypted source private (the GitHub repository). Never upload the only copy.
+2. Upload the ZIP from the FIVE DEV owner account at https://portal.cfx.re/ (Created Assets).
+3. Wait for Cfx.re processing, download the encrypted build and test it on an entitled server
+   (fresh database, `setr ox:locale "he"` and "en").
+4. Attach the asset to the matching Tebex package.
 
 Protection layout
 -----------------
-- client.lua and server.lua: protected by Asset Escrow.
-- config.lua: editable customer configuration.
-- html/: shipped as readable NUI files because NUI encryption is unsupported.
+- modules/** and shared/**: protected by Asset Escrow.
+- config/**, locales/**, bridge/**: open (escrow_ignore) so customers can configure, translate and integrate.
+- web/build: shipped readable (NUI cannot be encrypted).
 - SQL, item definitions, documentation and license: readable.
 
 Important
 ---------
-- Never upload your only source copy.
-- Never add client.lua or server.lua to escrow_ignore.
+- Never add modules/** or shared/** to escrow_ignore.
+- config/server.lua is not in `files`, so players never download it; keep it that way.
 - Encryption is performed by Cfx.re after upload, not locally.

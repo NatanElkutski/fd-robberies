@@ -1,0 +1,6 @@
+web/node_modules/
+web/build/
+*-workspace/
+*.zip
+.DS_Store
+Thumbs.db

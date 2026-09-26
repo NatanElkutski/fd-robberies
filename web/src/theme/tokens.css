@@ -1,0 +1,29 @@
+:root {
+  /* brand */
+  --fd-orange: #ff7800;
+  --fd-orange-2: #ff9a32;
+  --fd-orange-text: #ff8b27;
+  --fd-orange-glow: rgba(255, 120, 0, 0.22);
+  --fd-orange-dark: #2a190d;
+  --fd-orange-border: #693914;
+
+  /* surfaces */
+  --fd-bg: #07090a;
+  --fd-bg-2: #090b0c;
+  --fd-panel: #0d1011;
+  --fd-panel-2: #0e1112;
+  --fd-input: #090b0c;
+
+  /* lines */
+  --fd-line: #252a2c;
+  --fd-line-2: #303638;
+  --fd-line-soft: #202527;
+
+  /* text */
+  --fd-text: #f6f7f7;
+  --fd-text-soft: #9ca2a5;
+  --fd-text-muted: #81888b;
+
+  --fd-danger: #d84b43;
+  --fd-radius: 4px;
+}

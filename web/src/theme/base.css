@@ -1,0 +1,61 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  /* NUI is layered over the game: the page itself must stay transparent */
+  background: transparent;
+}
+
+body {
+  font-family: Arial, 'Noto Sans Hebrew', sans-serif;
+  color: var(--fd-text);
+  user-select: none;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  user-select: text;
+}
+
+/* thin orange scrollbars */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #71370e #0a0c0d;
+}
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+*::-webkit-scrollbar-track {
+  background: var(--fd-bg-2);
+  border-radius: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a94d0d, #e66c12);
+  border: 2px solid var(--fd-bg-2);
+  border-radius: 10px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #ff7b16;
+}
+
+kbd {
+  font-family: inherit;
+}

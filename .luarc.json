@@ -1,0 +1,12 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "runtime.version": "Lua 5.4",
+  "runtime.nonstandardSymbol": ["/**/", "`", "+=", "-=", "*=", "/=", "<<=", ">>=", "&=", "|=", "^="],
+  "workspace.ignoreDir": ["web", ".github", "docs", ".claude"],
+  "workspace.checkThirdParty": false,
+  "diagnostics.globals": [
+    "FD", "Bridge", "lib", "cache", "locale", "MySQL", "json", "promise", "exports", "source",
+    "vector2", "vector3", "vector4", "vec2", "vec3", "vec4", "quat", "joaat"
+  ],
+  "diagnostics.disable": ["undefined-global", "undefined-doc-name", "undefined-field"]
+}

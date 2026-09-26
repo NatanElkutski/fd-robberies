@@ -1,0 +1,80 @@
+.section {
+  padding: 10px 14px;
+}
+
+.section h3 {
+  margin: 3px 0 8px;
+  padding-bottom: 7px;
+  font-size: 10px;
+  letter-spacing: 0.3px;
+  color: #e2e5e6;
+  border-bottom: 1px solid var(--fd-line-soft);
+}
+
+.section h3 i {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-inline-end: 7px;
+  background: var(--fd-orange);
+  transform: rotate(45deg);
+}
+
+.muted {
+  margin: 6px 0;
+  font-size: 10px;
+  color: var(--fd-text-muted);
+}
+
+.row {
+  min-height: 42px;
+  margin: 5px 0;
+  padding: 8px 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  background: var(--fd-panel-2);
+  border: 1px solid #24292b;
+  border-radius: var(--fd-radius);
+}
+
+.row button,
+.inviteLine button {
+  padding: 5px 8px;
+  color: #ff9d45;
+  background: #2d190c;
+  border: 1px solid #573015;
+  border-radius: var(--fd-radius);
+}
+
+.inviteLine {
+  display: flex;
+  gap: 5px;
+}
+
+.inviteLine input {
+  width: 100%;
+  height: 42px;
+  padding: 9px 10px;
+  color: #fff;
+  background: var(--fd-input);
+  border: 1px solid #2b3032;
+  border-radius: var(--fd-radius);
+  outline: none;
+}
+
+.inviteLine input:focus {
+  border-color: #a64d0b;
+}
+
+.ghost {
+  width: 100%;
+  min-height: 42px;
+  margin-top: 5px;
+  padding: 7px;
+  color: #9a968f;
+  background: var(--fd-panel);
+  border: 1px solid #292824;
+  border-radius: var(--fd-radius);
+}
