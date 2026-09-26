@@ -101,4 +101,4 @@ CEF in current FiveM is a recent Chromium, so use modern ES (ES2022+) freely —
 
 ## 8. Frameworks
 
-Vanilla JS is fine for small UIs (this repo). For React/Vue/Svelte via Vite: `base: './'`, build to `html/` (or `web/dist`), list the build output in `files`, and keep dev-only mocks for `GetParentResourceName` and `message` events so the UI runs in a normal browser.
+This repo uses React + TypeScript + Vite in `web/` (structure and rules in `CLAUDE.md`: features with `api.ts`, typed `types/protocol.ts`, `useNuiEvent`, store + `useNuiSync`, CSS modules). Vanilla JS is fine for tiny UIs elsewhere. For React/Vue/Svelte via Vite: `base: './'`, build to `html/` (or `web/dist`), list the build output in `files`, and keep dev-only mocks for `GetParentResourceName` and `message` events so the UI runs in a normal browser.

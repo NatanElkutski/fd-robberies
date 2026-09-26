@@ -23,7 +23,7 @@ Open `fxmanifest.lua` and the top of `client.lua` / `server.lua` first. Use what
 | `qb-target` / `ox_target` exports | interaction system |
 | `Config.*Resource` values | integration is configurable — go through the config, don't hardcode |
 
-In this repo (fd-robberies): QBCore + ox_lib + oxmysql + qb-target (via `Config.TargetResource`), QBCore callbacks, notify through `cm-notification` with QBCore fallback, dispatch via `Config.DispatchResource`. Hebrew user-facing strings.
+In this repo (fd-robberies): QBCore + ox_lib + oxmysql + qb-target, all reached through `bridge/`; ox_lib callbacks/progress/locale; `FD.<Module>` namespaces in `modules/<feature>/`; event names in `shared/events.lua`; Hebrew + English text in `locales/*.json`. The structure and rules are in the repo's `CLAUDE.md` — follow them over the generic advice below where they differ.
 
 ## 2. fxmanifest.lua
 
@@ -148,7 +148,8 @@ Lua has no arrow functions; `function() ... end` is correct and current. "Modern
 ## 9. Style and file hygiene
 
 - Files are UTF-8 **without BOM** (Hebrew strings are stored raw). In PowerShell, read with `-Encoding utf8` or use the Read tool — the default ANSI read shows mojibake, which is a display problem, not file corruption. Never "fix" it by re-saving in another encoding.
-- The existing `client.lua`/`server.lua` are dense one-liners in legacy style. For a one-line fix inside such a line, keep the edit minimal so the diff stays reviewable. Anything new — a new function, handler, or a block you're rewriting anyway — is written in the modern style from §8, even if the neighbours aren't. Offer a full modernization refactor as a separate task rather than doing it silently in a feature change.
+- Format with StyLua (`stylua.toml` sets CfxLua syntax); it also serves as the syntax check. It doesn't parse `?[` — use `?.` or explicit checks.
+- In legacy single-file resources (dense one-liners), keep one-line fixes minimal so diffs stay reviewable; write anything new in the modern style from §8, and offer a full restructure as a separate task.
 - `local` everything (globals leak across the whole resource runtime and are slower).
 - Guard optional integrations: `if GetResourceState('cm-notification') == 'started' then ... else fallback end`.
 - `print` with color codes `^1` red `^2` green `^3` yellow `^5` blue `^7` reset; gate verbose logs behind `Config.Debug`.

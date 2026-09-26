@@ -172,6 +172,13 @@ NUI protocol (unchanged action names):
 
 4.0.0 replaces `config.lua` with `config/shared.lua`, `config/client.lua`, `config/server.lua`, and hardcoded Hebrew with `locales/*.json` (select with `setr ox:locale he` in server.cfg). Old configs must be re-applied to the new files; DB and item names are unchanged.
 
+## 8b. Implementation notes (as built)
+
+- Two extra modules emerged: `modules/hub` (menu payload, NPC, open command) and `modules/rewards` (dirty-money payout). Kind-specific completion is routed with `FD.Contracts.OnComplete(kind, handler)`; client modules hook missions with `FD.Mission.OnStart/OnEnd`.
+- UI: a tiny `features/hub` holds `closeUi` so only `api.ts` files call `fetchNui`; `providers/` contains only `LocaleProvider` (visibility lives in the store).
+- `?[` safe-index is avoided (StyLua can't parse it); `?.` is used.
+- Target option callbacks run inside `CreateThread` in the bridge so progress bars / callbacks can yield.
+
 ## 9. Known security issues (not fixed in this refactor)
 
 - `server:complete` (location/drill) pays without server-side distance or elapsed-time checks.

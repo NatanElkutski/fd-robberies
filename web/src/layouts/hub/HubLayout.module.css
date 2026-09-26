@@ -1,0 +1,53 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+/* 1536x1024 reference proportions, scaled to the screen */
+.shell {
+  position: relative;
+  width: min(1536px, 96vw);
+  height: min(1024px, 96vh);
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--fd-bg);
+  border: 1px solid #25292b;
+  box-shadow: 0 0 80px #000;
+}
+
+@media (min-aspect-ratio: 3/2) {
+  .shell {
+    width: auto;
+    height: min(96vh, 1024px);
+  }
+}
+
+@media (max-aspect-ratio: 3/2) {
+  .shell {
+    width: min(96vw, 1536px);
+    height: auto;
+  }
+}
+
+.workspace {
+  height: calc(100% - 68px);
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  overflow: hidden;
+  direction: ltr;
+}
+
+.main {
+  height: 100%;
+  min-width: 0;
+  padding: 10px 14px 24px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  direction: rtl;
+  background: #080a0b;
+}

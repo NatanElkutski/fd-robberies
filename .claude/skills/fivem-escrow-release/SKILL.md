@@ -16,30 +16,31 @@ This resource is a paid product (FIVE DEV, proprietary license). Customers recei
 ## Design rules for escrowed products
 
 1. **Everything tunable goes in `config.lua`** (escrow_ignore): times, rewards, items, coords, job names, police counts, keybinds, feature toggles, resource names of integrations.
-2. **Every user-facing string goes in a locale file** (`locales/he.lua`, `locales/en.lua` or ox_lib `locales/*.json`, escrow_ignore) with `Config.Locale = 'he'`. Code calls `L('store_clerk_surrendered')`. Customers translate/rephrase without you. The current `server.lua`/`client.lua` hardcode Hebrew — move strings out as you touch them.
+2. **Every user-facing string goes in a locale file** — this repo uses ox_lib `locales/*.json` (escrow_ignore), language chosen with `setr ox:locale "he"`. Code calls `locale('store.clerk_surrendered')`; the NUI receives the same dictionary. Customers translate/rephrase without you.
 3. **Integrations live in open bridge files** (`bridge/client.lua`, `bridge/server.lua` or `editable/*.lua`, escrow_ignore): notify, dispatch, inventory add/remove/has, clothing, target, progress bar, minigames, logging, `OnExploit(src, reason)`. Escrowed gameplay only calls `Bridge.X`. This is the industry-standard answer to "does it support my dispatch/inventory?".
 4. **Don't put secrets in open or client files**: no webhook URLs, license keys, or server-only logic in `config.lua` (it is also sent to clients as a shared script). Use a separate `server_config.lua` in `server_scripts` (escrow_ignore if the customer must set it) for webhooks.
 5. **Security can't rely on obscurity.** Escrowed client code can still be traced at runtime and NUI is plain text; all authority stays on the server (see `fivem-server-security`).
 6. Don't use `load()`/`loadstring` on config strings as a customization mechanism — it's fragile and escrow-hostile. Use functions in open bridge files instead.
 7. Keep the resource folder name stable (`fd-robberies`); customers' `server.cfg` and other scripts' exports reference it. If you depend on it, read it with `GetCurrentResourceName()` rather than hardcoding.
 
-fxmanifest pattern:
+fxmanifest pattern (this repo):
 ```lua
 escrow_ignore {
-    'config.lua',
-    'locales/*.lua',
+    'config/*.lua',
     'bridge/*.lua',
-    'install.sql',
+    'bridge/**/*.lua',
+    'locales/*.json',
+    'sql/*.sql',
     'ITEMS_TO_ADD.lua',
-    'README.md', 'LICENSE.txt',
+    'README.md', 'CHANGELOG.md', 'LICENSE.txt',
 }
 ```
-Never add the protected `client.lua` / `server.lua` (or `client/*.lua`, `server/*.lua`) to escrow_ignore.
+Never add `modules/**` or `shared/**` to escrow_ignore. `config/server.lua` stays out of `files` so players never download it. The full build/upload checklist is in the repo's `KEYMASTER-UPLOAD.txt` (build `web/` first; ship `web/build`, not `web/src`).
 
 ## Versioning and docs
 
 - Bump `version` in `fxmanifest.lua` on every release (semver: patch = fix, minor = feature, major = breaking config/DB change). The startup banner reads it via `GetResourceMetadata`.
-- Keep README's "Version" line and the changelog in sync with fxmanifest — currently they drift (README says 2.0.0 while fxmanifest says 3.6.8). Add a `## vX.Y.Z` section to the changelog describing player-visible changes and **any config keys added/renamed** (customers merging configs need this).
+- The version lives only in `fxmanifest.lua`; README points to it. Add a `## X.Y.Z` section to `CHANGELOG.md` describing player-visible changes and **any config keys added/renamed** (customers merging configs need this).
 - When adding config keys, give them safe defaults in code (`Config.X or default`) so customers who keep their old `config.lua` don't crash.
 - DB changes: additive migrations only, idempotent, and documented in `install.sql` + changelog.
 - New items: add to `ITEMS_TO_ADD.lua` in both qb-core and ox_inventory formats, with an image name.

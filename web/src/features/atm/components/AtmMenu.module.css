@@ -1,0 +1,48 @@
+.box {
+  width: 560px;
+  padding: 23px;
+  background: #0d0e0c;
+  border: 1px solid #3a342b;
+  border-radius: 9px;
+  box-shadow: 0 25px 80px #000;
+}
+
+.kicker {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: #ff8f2b;
+}
+
+.choices {
+  display: grid;
+  gap: 7px;
+}
+
+.choices button {
+  padding: 13px;
+  text-align: right;
+  color: #fff;
+  background: #151611;
+  border: 1px solid #302d26;
+  border-radius: 5px;
+}
+
+.choices button:hover {
+  border-color: var(--fd-orange);
+}
+
+.choices small {
+  display: block;
+  margin-top: 4px;
+  color: #817d76;
+}
+
+.cancel {
+  width: 100%;
+  margin-top: 9px;
+  padding: 9px;
+  color: #fff;
+  background: #292925;
+  border: 0;
+  border-radius: 5px;
+}

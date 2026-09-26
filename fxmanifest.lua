@@ -1,32 +1,87 @@
-fx_version '3.6.0'
+fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
+
+name 'fd-robberies'
 author 'FIVE DEV'
 description 'FD Robberies - Exclusive QBCore robbery network by FIVE DEV'
-version '3.6.8'
+version '4.0.0'
 
-ui_page 'html/index.html'
+dependencies {
+    'qb-core',
+    'oxmysql',
+    'ox_lib',
+}
 
+ox_lib 'locale'
+
+-- Load order matters: shared → bridge → core modules → feature modules.
+-- Gameplay files are escrowed, so they are listed here instead of being require()d.
 shared_scripts {
     '@ox_lib/init.lua',
-    'config.lua'
+    'shared/init.lua',
+    'shared/events.lua',
+    'shared/utils.lua',
+    'shared/types.lua',
 }
-client_scripts {'client.lua'}
+
+client_scripts {
+    'bridge/qb/client.lua',
+    'bridge/client.lua',
+
+    'modules/core/client.lua',
+    'modules/contracts/client.lua',
+    'modules/crew/client.lua',
+    'modules/chat/client.lua',
+    'modules/progress/client.lua',
+    'modules/hub/client.lua',
+    'modules/shop/client.lua',
+    'modules/location/client.lua',
+    'modules/store/client.lua',
+    'modules/atm/client/state.lua',
+    'modules/atm/client/rope.lua',
+    'modules/atm/client/drill.lua',
+    'modules/atm/client/explosive.lua',
+    'modules/atm/client/menu.lua',
+}
+
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
-    'server.lua'
-}
-files {
-    'html/index.html','html/style.css','html/app.js','html/img/*','html/avatars/*','html/assets/heists/*','html/assets/avatars/*','html/assets/shop/*'
+    'bridge/qb/server.lua',
+    'bridge/server.lua',
+
+    'modules/core/server.lua',
+    'modules/progress/server.lua',
+    'modules/rewards/server.lua',
+    'modules/crew/server.lua',
+    'modules/chat/server.lua',
+    'modules/contracts/server.lua',
+    'modules/hub/server.lua',
+    'modules/location/server.lua',
+    'modules/shop/server.lua',
+    'modules/store/server.lua',
+    'modules/atm/server.lua',
 }
 
-dependencies {'qb-core','oxmysql','ox_lib'}
+ui_page 'web/build/index.html'
+
+-- Files players download. config/server.lua is intentionally NOT listed.
+files {
+    'config/shared.lua',
+    'config/client.lua',
+    'locales/*.json',
+    'web/build/index.html',
+    'web/build/**/*',
+}
 
 escrow_ignore {
-    'config.lua',
+    'config/*.lua',
+    'bridge/*.lua',
+    'bridge/**/*.lua',
+    'locales/*.json',
+    'sql/*.sql',
+    'ITEMS_TO_ADD.lua',
     'README.md',
+    'CHANGELOG.md',
     'LICENSE.txt',
-    'KEYMASTER-UPLOAD.txt',
-    'install.sql',
-    'ITEMS_TO_ADD.lua'
 }

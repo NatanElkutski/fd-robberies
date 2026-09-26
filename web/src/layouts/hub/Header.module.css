@@ -1,0 +1,148 @@
+.header {
+  height: 68px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 280px minmax(500px, 1fr) 280px;
+  align-items: center;
+  direction: ltr;
+  background: var(--fd-bg-2);
+  border-bottom: 1px solid #282b2d;
+}
+
+/* ---------- brand ---------- */
+
+.brand {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  width: 68px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Arial Black', Arial, sans-serif;
+  font-style: italic;
+  font-weight: 1000;
+  color: #ff7410;
+  transform: skew(-10deg);
+  filter: drop-shadow(0 0 10px rgba(255, 116, 16, 0.16));
+}
+
+.logo span:first-child {
+  font-size: 39px;
+  letter-spacing: -14px;
+}
+
+.logo span:last-child {
+  margin-left: 7px;
+  font-size: 38px;
+}
+
+.brandCopy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+
+.brandCopy b {
+  font: 800 20px/1 Arial, sans-serif;
+  letter-spacing: 1.3px;
+  color: #f6f6f6;
+}
+
+.brandCopy small {
+  margin-top: 5px;
+  font: 600 8px/1 Arial, sans-serif;
+  letter-spacing: 2px;
+  color: #8e9496;
+}
+
+/* ---------- tabs ---------- */
+
+.tabs {
+  justify-self: center;
+  display: flex;
+  gap: 8px;
+  direction: rtl;
+}
+
+.tabs button {
+  min-width: 140px;
+  height: 43px;
+  padding: 0 22px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #b8bdc0;
+  background: var(--fd-panel);
+  border: 1px solid #2a2f31;
+  border-radius: var(--fd-radius);
+}
+
+.tabs button.active {
+  color: #fff;
+  background: linear-gradient(180deg, #2b160a, #16100c);
+  border-color: #9a480d;
+  box-shadow: inset 0 -2px var(--fd-orange), 0 0 18px rgba(255, 120, 0, 0.1);
+}
+
+/* ---------- account ---------- */
+
+.account {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  direction: rtl;
+}
+
+.miniFace {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #5c371a;
+  background-size: cover;
+  background-position: center;
+}
+
+.name {
+  font-weight: 850;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.level {
+  padding: 10px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: #b6b2ab;
+  background: #121311;
+  border: 1px solid #292824;
+  border-radius: 6px;
+}
+
+.level i {
+  font-style: normal;
+  color: var(--fd-orange);
+}
+
+.close {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  font-size: 22px;
+  color: #fff;
+  background: #0b0d0e;
+  border: 1px solid #3a3e40;
+  border-radius: var(--fd-radius);
+}
+
+.close:hover {
+  border-color: var(--fd-orange);
+}
