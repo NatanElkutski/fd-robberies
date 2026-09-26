@@ -98,6 +98,16 @@ for (const [key, value] of Object.entries(locales.he)) {
   }
 }
 
+// Roleplay immersion: player-facing text never talks about game mechanics like "NPC".
+const IMMERSION_BREAKERS = /\bNPC\b|\bNPCs\b|\bped\b/i;
+for (const lang of ['he', 'en']) {
+  for (const [key, value] of Object.entries(locales[lang])) {
+    if (typeof value === 'string' && IMMERSION_BREAKERS.test(value)) {
+      errors.push(`locales: ${lang}.json "${key}" breaks roleplay immersion ("${value}") — say "the contact" / "איש הקשר"`);
+    }
+  }
+}
+
 const usedKeys = new Map();
 for (const [file, text] of Object.entries(lua)) {
   for (const key of matchAll(text, /locale\('([\w.]+)'/g)) usedKeys.set(key, file);

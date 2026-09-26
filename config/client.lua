@@ -8,6 +8,10 @@ return {
     openKey = 'F6',
     briefingKey = 'B',
 
+    -- Mission panel (timer / objective / briefing) position on screen. Keep it clear of your
+    -- chat resource (usually top-left). Any CSS length: '24px', '46vh', '3vw'...
+    missionHud = { left = '24px', top = '46vh' },
+
     targetResource = 'qb-target',
 
     hubNpc = {
@@ -86,7 +90,11 @@ return {
             -- Ropes: they collide with the world and their length follows the distance between the two
             -- ends (small slack), capped at the max length — at the cap the rope is taut and pulls.
             ropeType = 4, -- GTA rope style
-            ropeSlack = 0.25, -- metres of sag kept in a rope shorter than its max
+            ropeSlack = 0.6, -- max extra rope (metres) for a natural hang; tightens as the ends move apart
+            groundClearance = 0.08, -- the sag is limited so the rope's lowest point stays this far above the ground
+            towPointHeight = 0.55, -- tow hook height above the bottom of the vehicle (metres)
+            hookAttachTime = 1800, -- ms to crouch and mount the hook on the vehicle
+            hookVehicleRotation = vec3(0.0, 0.0, 180.0), -- hook rotation when mounted on the vehicle
             handRopeLength = 15.0, -- max rope between the ATM and the hook in your hand
             ropeLength = 9.0, -- max rope from the wall ATM to the vehicle while pulling
             towRopeLength = 6.0, -- max rope between the vehicle and the ripped ATM while towing

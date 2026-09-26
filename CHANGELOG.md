@@ -1,5 +1,17 @@
 # Changelog
 
+## 4.3.0 — tow hook and HUD polish
+
+### Changed
+- **The tow hook is a real object end to end:** it's in the player's hand while the rope is tied to the ATM, stays in the hand while walking to the car, and is mounted on the car's tow point (kneel animation) where it stays visible — the rope stays connected to it through pulling and towing. It's removed together with the ATM after the money is taken.
+- The tow point is computed from each vehicle's real dimensions (any car size), height set by `atm.rope.towPointHeight`.
+- **Ropes keep their natural hang** (slack when close, tightening as the ends move apart) but the sag is limited so it never dips below the ground. `atm.rope.ropeSlack` (max hang) and `atm.rope.groundClearance`.
+- The mission panel sits below the chat by default and its position is configurable: `missionHud` in `config/client.lua`.
+- Briefings refer to your contact as a person ("איש הקשר"), never "NPC".
+
+### Config (config/client.lua)
+- Added `missionHud`, `atm.rope.towPointHeight`, `hookAttachTime`, `hookVehicleRotation`, `groundClearance`.
+
 ## 4.2.0 — ATM rope feel
 
 ### Fixed

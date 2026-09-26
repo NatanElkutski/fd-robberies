@@ -86,7 +86,14 @@ export function reducer(state: State, action: Action): State {
       return {
         ...state,
         mission: action.show
-          ? { show: true, label: action.label ?? '', briefing: action.briefing ?? [], expanded: false, seconds: state.mission.seconds }
+          ? {
+              show: true,
+              label: action.label ?? '',
+              briefing: action.briefing ?? [],
+              expanded: false,
+              seconds: state.mission.seconds,
+              position: action.position ?? state.mission.position,
+            }
           : { ...state.mission, show: false },
       };
 

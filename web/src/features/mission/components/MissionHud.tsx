@@ -10,7 +10,11 @@ export function MissionHud() {
   if (!mission.show) return null;
 
   return (
-    <aside className={`${styles.hud} ${mission.expanded ? styles.expanded : ''}`}>
+    <aside
+      className={`${styles.hud} ${mission.expanded ? styles.expanded : ''}`}
+      // position comes from config/client.lua (missionHud) so it can be moved clear of the chat
+      style={{ left: mission.position.left, top: mission.position.top }}
+    >
       <div className={styles.hint}>
         <kbd>B</kbd>
         <span>{t('ui.mission.expand_hint')}</span>
