@@ -27,9 +27,10 @@ tools/      check.mjs  (events / locales / manifest / NUI protocol consistency)
 
 ## Language (strict) — this is a Hebrew FiveM server
 
-- **Every text a player sees or acts on is Hebrew**: NPC/target options, menus, tabs, buttons, titles, section headings, placeholders, hints, notifications, progress-bar labels, keybinding descriptions, briefings, errors. Hebrew is the default (`config/shared.lua` → `locale = 'he'`), and `locales/he.json` must be complete.
+- **Every text a player sees or acts on is Hebrew**: NPC/target options, menus, tabs, buttons, titles, section headings, placeholders, hints, on-screen prompts, notifications, progress-bar labels, briefings, errors. Hebrew is the default (`config/shared.lua` → `locale = 'he'`), and `locales/he.json` must be complete.
 - **English is allowed only for**: the brand (FIVE DEV, CRIMINAL NETWORK), GTA place/brand names (Vangelico, Paleto, Fleeca, Humane Labs…), technical tokens (ID, XP, ALT, E, GPS, USB, $), and small decorative code-name tags shown next to a Hebrew title (`robbery.*.subtitle`, `*.kicker`, `*.brand`). When unsure, use Hebrew.
 - Every new key goes into **both** `he.json` (Hebrew) and `en.json` (English). `tools/check.mjs` fails on a `he.json` value without Hebrew unless its key is allowlisted there — extend the allowlist only for the categories above.
+- **GTA's native text renderer cannot draw Hebrew** (it shows boxes): never use `DrawText`/`BeginTextCommandDisplayText`/help text/subtitles/blip names for player text. Use NUI surfaces instead — `Bridge.Notify`, `lib.showTextUI` (on-screen prompts, e.g. "[E] …"), the progress bar, target labels, the menu. World markers (`DrawMarker`) are fine for pointing at a spot. The only unavoidable native surface is the key-binding description in GTA's settings menu (`keys.*`), which stays English. `tools/check.mjs` fails on native text calls.
 - The resource uses its own loader (`shared/locale.lua`), not ox_lib's `ox:locale` convar or per-player setting, so the configured language always wins.
 - Layout stays RTL (`dir="rtl"`); wrap mixed-direction fragments (IDs, prices, English names) so they don't flip.
 

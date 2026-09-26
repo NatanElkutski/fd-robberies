@@ -49,6 +49,17 @@ local function isCoords(value)
         and tonumber(value.z) ~= nil
 end
 
+---@param netId? integer
+local function deleteProp(netId)
+    if not netId then
+        return
+    end
+    local entity = NetworkGetEntityFromNetworkId(netId)
+    if entity ~= 0 and DoesEntityExist(entity) then
+        DeleteEntity(entity)
+    end
+end
+
 ---@param src integer
 ---@param netId integer
 ---@return boolean inRange (true when the entity isn't known server-side yet)
@@ -130,7 +141,7 @@ end)
 
 -- Rope -------------------------------------------------------------------------
 
----Called by the puller once the ATM is ripped out and replaced by a networked prop.
+---Called by the puller as soon as the rope is tied: the wall ATM was swapped for a networked prop.
 RegisterNetEvent(FD.Events.Server.RegisterRopeAtm, function(netId, coords, model)
     local src = source
     local contract = contractFor(src)
@@ -224,7 +235,11 @@ RegisterNetEvent(FD.Events.Server.RopeLoot, function(netId)
         end
     end
     if everyone then
+        -- the money is out: the rope and the ATM prop go away (the wall stays empty until the contract ends)
         toCrew(contract, FD.Events.Client.RopeAllLooted, netId)
+        SetTimeout(1500, function()
+            deleteProp(netId)
+        end)
     end
 end)
 
@@ -278,12 +293,7 @@ FD.Contracts.OnClose(function(id, contract)
         return
     end
 
-    if contract.ropeATM then
-        local entity = NetworkGetEntityFromNetworkId(contract.ropeATM)
-        if entity ~= 0 and DoesEntityExist(entity) then
-            DeleteEntity(entity)
-        end
-    end
+    deleteProp(contract.ropeATM)
     if contract.hiddenAtm then
         restore(contract.hiddenAtm)
     end
@@ -294,10 +304,5 @@ AddEventHandler('onResourceStop', function(resource)
         return
     end
     local contract = FD.Contracts.Get(ATM)
-    if contract?.ropeATM then
-        local entity = NetworkGetEntityFromNetworkId(contract.ropeATM)
-        if entity ~= 0 and DoesEntityExist(entity) then
-            DeleteEntity(entity)
-        end
-    end
+    deleteProp(contract and contract.ropeATM)
 end)

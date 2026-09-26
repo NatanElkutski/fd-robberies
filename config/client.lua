@@ -79,11 +79,9 @@ return {
         explosionCountdown = 5,
         rope = {
             vehicleAttachDistance = 7.0,
-            pullCount = 2,
-            pullSpeed = 6.5,
-            pullDistance = 3.5,
-            pullResetSpeed = 1.15,
-            pullResetMs = 700,
+            pullCount = 2, -- hard pulls needed to rip the ATM off the wall
+            pullSpeed = 6.5, -- vehicle speed (m/s) when the rope goes taut for a pull to count
+            pullSlack = 3.0, -- reverse this many metres of slack to arm the next pull
             lootDistanceFromOrigin = 35.0, -- how far the ATM must be towed before it can be opened
             ropeLength = 9.0, -- rope from the wall ATM to the vehicle while pulling
             towRopeLength = 6.0, -- rope between the vehicle and the ripped ATM while towing

@@ -81,7 +81,17 @@ for (const [a, b] of [['he', 'en'], ['en', 'he']]) {
 }
 
 // Hebrew server: every he.json value must contain Hebrew, except decorative English tags / technical tokens.
-const ENGLISH_ALLOWED = [/\.subtitle$/, /\.kicker$/, /\.brand$/, /^ui\.heists\.xp$/];
+// keys.* = RegisterKeyMapping descriptions, shown in GTA's own settings menu (game font: no Hebrew glyphs)
+const ENGLISH_ALLOWED = [/\.subtitle$/, /\.kicker$/, /\.brand$/, /^ui\.heists\.xp$/, /^keys\./];
+
+// GTA's native text renderer (DrawText, help text, subtitles, blip names) has no Hebrew glyphs and shows boxes.
+// Player-facing text must go through NUI (notify, ox_lib text UI, progress bar, target, the menu).
+const NATIVE_TEXT = /\b(BeginTextCommandDisplayText|BeginTextCommandDisplayHelp|BeginTextCommandPrint|BeginTextCommandSetBlipName|SetTextEntry|DrawText|DisplayHelpTextThisFrame)\s*\(/;
+for (const [file, text] of Object.entries(lua)) {
+  text.split('\n').forEach((line, index) => {
+    if (NATIVE_TEXT.test(line)) errors.push(`native text: ${file}:${index + 1} uses GTA native text (no Hebrew) — use lib.showTextUI / Bridge.Notify`);
+  });
+}
 for (const [key, value] of Object.entries(locales.he)) {
   if (typeof value === 'string' && !/[֐-׿]/.test(value) && !ENGLISH_ALLOWED.some((re) => re.test(key))) {
     errors.push(`locales: he.json "${key}" has no Hebrew ("${value}") — translate it or allowlist it in tools/check.mjs`);

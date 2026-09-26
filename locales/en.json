@@ -4,8 +4,8 @@
     "ui_not_ready": "The menu failed to load. Contact the server staff."
   },
   "keys": {
-    "open_hub": "Open Robbery Hub",
-    "briefing": "Robbery briefing"
+    "open_hub": "FD Robberies - Open robbery hub",
+    "briefing": "FD Robberies - Robbery briefing"
   },
   "actions": {
     "default": "Working..."
@@ -100,12 +100,12 @@
     "reward_failed_inventory": "Couldn't put the reward in your inventory. Check the dirtymoney/CASH setup.",
     "rope_already": "A rope is already attached to an ATM",
     "attaching_rope": "Attaching the rope to the ATM...",
-    "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to the back of a vehicle and press E to attach it.",
-    "attach_hook_prompt": "[E] Attach hook and rope to vehicle",
-    "hook_attached": "Hook and rope attached. Do %d hard pulls with the vehicle.",
-    "pull_ok": "Pull %d/%d worked. Stop the vehicle for a moment to set up the next pull.",
-    "pull_final": "Pull %d/%d — the anchor broke!",
-    "pull_ready": "Next pull ready (%d/%d). Accelerate to tighten the rope.",
+    "rope_attached": "The rope is tied to the ATM and the hook is in your hand. Go to a vehicle's trunk and press E to attach it.",
+    "attach_hook_prompt": "[E] Attach the hook to the vehicle",
+    "hook_attached": "Hook attached. Drive forward hard until the rope goes taut — %d pulls needed.",
+    "pull_ok": "Pull %d/%d worked! Reverse a little to give the rope slack.",
+    "pull_final": "Pull %d/%d — the ATM is ripped off the wall!",
+    "pull_ready": "Rope is slack — next pull ready (%d/%d). Drive forward hard.",
     "ripped": "The ATM was ripped off the wall! Drag it somewhere remote and stop the vehicle to unhook it.",
     "dropped": "The ATM is unhooked — ALT on it to take the money.",
     "tow_further": "Tow the ATM further before you can open it",

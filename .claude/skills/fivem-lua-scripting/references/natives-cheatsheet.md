@@ -40,7 +40,7 @@ local function drawText3D(coords, text)
     BeginTextCommandDisplayText('STRING'); AddTextComponentSubstringPlayerName(text); EndTextCommandDisplayText(sx, sy)
 end
 ```
-Both must be called every frame (`Wait(0)`) while visible — only do it when the player is close. Prefer ox_lib `lib.showTextUI('[E] ...')` / target systems for interactions.
+Both must be called every frame (`Wait(0)`) while visible — only do it when the player is close. Prefer ox_lib `lib.showTextUI('[E] ...')` / target systems for interactions. **Native text can't render Hebrew (or other non-Latin scripts) — it shows boxes; on Hebrew servers always use `lib.showTextUI` / NUI for text.**
 
 ## 3. Animations and scenarios
 ```lua
