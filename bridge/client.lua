@@ -22,7 +22,7 @@ end
 -- Progress -------------------------------------------------------------------
 
 ---Blocking progress bar. Must be called from a thread/handler (it yields).
----@param data { label: string, duration: integer, anim?: { dict: string, clip: string, flag?: integer } }
+---@param data { label: string, duration: integer, anim?: { dict: string, clip: string, flag?: integer }, prop?: { model: string|integer, bone?: integer, pos?: vector3, rot?: vector3 } }
 ---@return boolean completed
 function Bridge.Progress(data)
     return lib.progressBar({
@@ -32,6 +32,7 @@ function Bridge.Progress(data)
         canCancel = true,
         disable = { move = true, car = true, combat = true },
         anim = data.anim,
+        prop = data.prop,
     })
 end
 

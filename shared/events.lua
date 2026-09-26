@@ -32,6 +32,7 @@ FD.Events = {
         RegisterRopeAtm = server('registerRopeATM'),
         RopeLootable = server('ropeLootable'),
         RopeLoot = server('ropeLoot'),
+        RopeTowSync = server('ropeTowSync'),
     },
 
     -- server -> client net events (and a few local target events)
@@ -46,8 +47,11 @@ FD.Events = {
         LootTowedAtm = client('lootTowedATM'),
         CrewRopeAtm = client('crewRopeATM'),
         CrewRopeLootable = client('crewRopeLootable'),
-        DetachRopeAfterLoot = client('detachRopeAfterLoot'),
         RopeAllLooted = client('ropeAllLooted'),
+        CrewRopeTow = client('crewRopeTow'),
+        AtmBlasted = client('atmBlasted'),
+        HideAtm = client('hideATM'),
+        RestoreAtm = client('restoreATM'),
     },
 
     -- ox_lib callbacks (client asks, server answers)
@@ -55,5 +59,6 @@ FD.Events = {
         GetData = server('getData'),
         CheckMethod = server('checkMethod'),
         GetSafeHint = server('getSafeHint'),
+        GetHiddenAtms = server('getHiddenATMs'),
     },
 }

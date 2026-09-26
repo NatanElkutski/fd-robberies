@@ -84,9 +84,15 @@ return {
             pullDistance = 3.5,
             pullResetSpeed = 1.15,
             pullResetMs = 700,
-            lootDistanceFromOrigin = 35.0,
-            ropeLength = 9.0,
+            lootDistanceFromOrigin = 35.0, -- how far the ATM must be towed before it can be opened
+            ropeLength = 9.0, -- rope from the wall ATM to the vehicle while pulling
+            towRopeLength = 6.0, -- rope between the vehicle and the ripped ATM while towing
             hookModel = 'prop_rope_hook_01',
+            ripImpulse = 6.0, -- how hard the ATM is thrown towards the vehicle when it breaks off
+            stopToDropMs = 1500, -- vehicle must stand still this long to unhook the ATM
+            sparksMinSpeed = 2.0, -- ATM speed (m/s) above which it throws sparks while dragged
+            rescueExtraDistance = 8.0, -- ATM further than rope length + this from the vehicle is pulled back
+            looseRehookDistance = 12.0, -- a loose ATM (vehicle lost) can be re-hooked from this range
         },
     },
 }

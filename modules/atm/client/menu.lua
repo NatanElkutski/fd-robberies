@@ -63,7 +63,11 @@ end
 ---@param entity integer
 ---@return boolean
 local function canBreach(entity)
-    return FD.Atm.IsActive() and not FD.Atm.Rope.IsAttachedTo(entity)
+    -- only wall (map) ATMs can be breached; networked ones are ripped-out props
+    return FD.Atm.IsActive()
+        and not FD.Atm.Rope.IsAttachedTo(entity)
+        and not FD.Atm.used[entity]
+        and not NetworkGetEntityIsNetworked(entity)
 end
 
 ---@param entity integer
@@ -72,7 +76,7 @@ local function canLootTowed(entity)
     return FD.Atm.IsActive()
         and FD.Atm.crewRopeNetId ~= nil
         and FD.Atm.crewRopeLootable
-        and NetworkGetNetworkIdFromEntity(entity) == FD.Atm.crewRopeNetId
+        and FD.Atm.NetIdOf(entity) == FD.Atm.crewRopeNetId
 end
 
 ---@param entity integer
@@ -149,7 +153,12 @@ local function addCloseZones()
             false,
             false
         )
-        if entity ~= 0 and DoesEntityExist(entity) and not closeZones[tostring(entity)] then
+        if
+            entity ~= 0
+            and DoesEntityExist(entity)
+            and not NetworkGetEntityIsNetworked(entity) -- wall ATMs only; the towed prop moves
+            and not closeZones[tostring(entity)]
+        then
             local name = ('je_atm_close_%s'):format(entity)
             Bridge.Target.AddCircleZone(
                 name,

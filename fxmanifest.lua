@@ -5,7 +5,7 @@ lua54 'yes'
 name 'fd-robberies'
 author 'FIVE DEV'
 description 'FD Robberies - Exclusive QBCore robbery network by FIVE DEV'
-version '4.0.0'
+version '4.1.0'
 
 dependencies {
     'qb-core',
@@ -38,6 +38,7 @@ client_scripts {
     'modules/location/client.lua',
     'modules/store/client.lua',
     'modules/atm/client/state.lua',
+    'modules/atm/client/world.lua',
     'modules/atm/client/rope.lua',
     'modules/atm/client/drill.lua',
     'modules/atm/client/explosive.lua',

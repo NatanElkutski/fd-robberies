@@ -14,6 +14,8 @@ local active = {}
 local cooldowns = {}
 ---@type table<string, fun(src: integer, id: string, method: any, contract: ActiveContract)>
 local completeHandlers = {}
+---@type fun(id: string, contract: ActiveContract)[]
+local closeHandlers = {}
 
 FD.Contracts = {}
 
@@ -70,6 +72,23 @@ function FD.Contracts.OnComplete(kind, handler)
     completeHandlers[kind] = handler
 end
 
+---Lets a module clean up world state (spawned props, hidden map objects) whenever a contract ends.
+---@param handler fun(id: string, contract: ActiveContract)
+function FD.Contracts.OnClose(handler)
+    closeHandlers[#closeHandlers + 1] = handler
+end
+
+---@param id string
+---@param contract ActiveContract
+local function runCloseHandlers(id, contract)
+    for _, handler in ipairs(closeHandlers) do
+        local ok, err = pcall(handler, id, contract)
+        if not ok then
+            print(('^1[%s] contract close handler failed: %s^7'):format(FD.Resource, err))
+        end
+    end
+end
+
 ---@param id string
 ---@param contract ActiveContract
 ---@param success boolean
@@ -84,6 +103,7 @@ end
 local function expire(id, notifyKey)
     local contract = active[id]
     active[id] = nil
+    runCloseHandlers(id, contract)
     notifyEnded(id, contract, false)
     if notifyKey then
         for member in pairs(contract.members) do
@@ -108,6 +128,7 @@ local function close(src, id, success)
 
     active[id] = nil
     cooldowns[id] = os.time() + config.robberies[id].cooldown
+    runCloseHandlers(id, contract)
 
     local xp = config.robberies[id].xp
     for member in pairs(contract.members) do

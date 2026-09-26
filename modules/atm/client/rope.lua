@@ -1,40 +1,58 @@
 --[[
-    ATM breach (client) — rope + vehicle method:
-    attach rope to the ATM (hook in hand) → attach hook to a vehicle (E) → N hard pulls →
-    tow the ripped ATM away → stop to set it down → every crew member loots their share.
+    ATM breach (client) — rope + vehicle method. Stages:
+
+      hand      rope tied to the wall ATM, hook in the player's hand → press E at a vehicle's rear
+      anchored  rope wall ATM ↔ vehicle; the driver does N hard pulls (stop between pulls)
+      towing    the ATM breaks off: the map ATM is hidden for everyone and replaced by a networked,
+                fully physical ATM prop tied to the vehicle with a real rope — it falls, drags,
+                bounces and throws sparks. A watchdog puts it back behind the car if physics lose it.
+      loose     the vehicle was lost (deleted/destroyed) before the loot distance → re-hook to a vehicle
+      lootable  the vehicle stopped far enough away: rope unhooked, ATM settles, every member loots
+
+    Only the player who ripped the ATM runs the physics (owns the prop). The rest of the crew gets a
+    mirrored visual rope (CrewRopeTow) and loots through FD.Atm.Rope.Loot.
 ]]
 
 local config = require('config.client')
 
 local rope = config.atm.rope
+local ROPE_TYPE <const> = 4
 local VEHICLE_REAR_OFFSET <const> = vec3(0.0, -2.2, 0.3)
-local TOW_OFFSET <const> = vec3(0.0, -4.4, -0.55)
-local DROP_OFFSET <const> = vec3(0.0, -4.4, 0.8)
 local HOOK_PROMPT_DISTANCE <const> = 2.6
 local STOP_SPEED <const> = 0.45
-local STOP_TO_DROP_MS <const> = 1500
-local ROPE_REPAIR_MS <const> = 500
+local SETTLE_SPEED <const> = 0.3
+local SETTLE_TIMEOUT_MS <const> = 3000
+local SPARK_INTERVAL_MS <const> = 120
+local WATCHDOG_INTERVAL_MS <const> = 400
 local RIGHT_HAND_BONE <const> = 57005
+local LOOT_ANIM <const> = { dict = 'anim@heists@ornate_bank@grab_cash', clip = 'grab', flag = 1 }
+local CONTROL_E <const> = 38
 
 ---@class RopeState
----@field atm integer
+---@field stage 'hand'|'anchored'|'towing'|'loose'|'lootable'
+---@field wallAtm integer            the map ATM (never networked)
+---@field model integer
 ---@field origin vector3
----@field rope? integer             vehicle tow rope
----@field handRope? integer         rope between ATM and the hook in hand
+---@field prop? integer              networked ATM prop after the rip
+---@field netId? integer
 ---@field vehicle? integer
+---@field rope? integer              current rope (wall↔vehicle or prop↔vehicle)
+---@field handRope? integer          rope wall ATM ↔ hook in hand
 ---@field pulls integer
 ---@field pullReady boolean
 ---@field pullResetSince? integer
 ---@field lastPullAnchor vector3
----@field detached boolean
----@field towAttached? boolean
----@field lootable boolean
 ---@field stopSince? integer
----@field lastRopeRepair? integer
+---@field nextSpark integer
+---@field nextWatchdog integer
 
 ---@type RopeState|nil
 local state = nil
 local towHook = nil
+---@type integer|nil visual rope mirrored from another crew member's tow
+local crewRope = nil
+
+-- Helpers ----------------------------------------------------------------------
 
 local function loadRopeTextures()
     RopeLoadTextures()
@@ -42,6 +60,72 @@ local function loadRopeTextures()
     while not RopeAreTexturesLoaded() and GetGameTimer() < deadline do
         Wait(0)
     end
+end
+
+---@param handle? integer
+local function deleteRope(handle)
+    if handle and DoesRopeExist(handle) then
+        DeleteRope(handle)
+    end
+end
+
+---Rope tied between two entities at the given world positions.
+---@return integer rope handle
+local function tieRope(entityA, posA, entityB, posB, length)
+    loadRopeTextures()
+    local handle = AddRope(
+        posA.x,
+        posA.y,
+        posA.z,
+        0.0,
+        0.0,
+        0.0,
+        length,
+        ROPE_TYPE,
+        length,
+        1.0,
+        0.5,
+        false,
+        false,
+        true,
+        1.0,
+        false,
+        0
+    )
+    AttachEntitiesToRope(
+        handle,
+        entityA,
+        entityB,
+        posA.x,
+        posA.y,
+        posA.z,
+        posB.x,
+        posB.y,
+        posB.z,
+        length,
+        false,
+        false,
+        nil,
+        nil
+    )
+    return handle
+end
+
+---@param vehicle integer
+---@return vector3
+local function rearOf(vehicle)
+    return GetOffsetFromEntityInWorldCoords(
+        vehicle,
+        VEHICLE_REAR_OFFSET.x,
+        VEHICLE_REAR_OFFSET.y,
+        VEHICLE_REAR_OFFSET.z
+    )
+end
+
+---@param entity integer
+---@return vector3
+local function topOf(entity)
+    return GetEntityCoords(entity) + vec3(0.0, 0.0, 0.45)
 end
 
 local function removeTowHook()
@@ -85,108 +169,6 @@ local function giveTowHook()
     SetModelAsNoLongerNeeded(model)
 end
 
----@param from integer entity
----@param fromPos vector3
----@param to integer entity
----@param toPos vector3
----@return integer rope handle
-local function addRope(from, fromPos, to, toPos)
-    local handle = AddRope(
-        fromPos.x,
-        fromPos.y,
-        fromPos.z,
-        0.0,
-        0.0,
-        0.0,
-        rope.ropeLength,
-        4,
-        rope.ropeLength,
-        1.0,
-        0.5,
-        false,
-        false,
-        true,
-        1.0,
-        false,
-        0
-    )
-    AttachRopeToEntity(handle, from, fromPos.x, fromPos.y, fromPos.z, false)
-    AttachRopeToEntity(handle, to, toPos.x, toPos.y, toPos.z, false)
-    RopeForceLength(handle, rope.ropeLength)
-    return handle
-end
-
----@param rs RopeState
----@return boolean
-local function createTowRope(rs)
-    if not DoesEntityExist(rs.atm) or not rs.vehicle or not DoesEntityExist(rs.vehicle) then
-        return false
-    end
-    if rs.rope and DoesRopeExist(rs.rope) then
-        DeleteRope(rs.rope)
-    end
-
-    loadRopeTextures()
-    local atmPos = GetEntityCoords(rs.atm) + vec3(0.0, 0.0, 0.45)
-    local rear = GetOffsetFromEntityInWorldCoords(
-        rs.vehicle,
-        VEHICLE_REAR_OFFSET.x,
-        VEHICLE_REAR_OFFSET.y,
-        VEHICLE_REAR_OFFSET.z
-    )
-    rs.rope = addRope(rs.atm, atmPos, rs.vehicle, rear)
-    return true
-end
-
----@param rs RopeState
----@param finalPull boolean
-local function pullEffects(rs, finalPull)
-    if not DoesEntityExist(rs.atm) then
-        return
-    end
-
-    local pos = GetEntityCoords(rs.atm)
-    ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', finalPull and 0.28 or 0.14)
-
-    RequestNamedPtfxAsset('core')
-    local deadline = GetGameTimer() + 1200
-    while not HasNamedPtfxAssetLoaded('core') and GetGameTimer() < deadline do
-        Wait(0)
-    end
-    if HasNamedPtfxAssetLoaded('core') then
-        UseParticleFxAssetNextCall('core')
-        StartParticleFxNonLoopedAtCoord(
-            'ent_dst_concrete_large',
-            pos.x,
-            pos.y,
-            pos.z + 0.35,
-            0.0,
-            0.0,
-            0.0,
-            finalPull and 1.15 or 0.65,
-            false,
-            false,
-            false
-        )
-        UseParticleFxAssetNextCall('core')
-        StartParticleFxNonLoopedAtCoord(
-            'ent_dst_elec_fire_sp',
-            pos.x,
-            pos.y,
-            pos.z + 0.65,
-            0.0,
-            0.0,
-            0.0,
-            finalPull and 0.9 or 0.45,
-            false,
-            false,
-            false
-        )
-    end
-
-    SetEntityVelocity(rs.atm, 0.0, 0.0, finalPull and 0.22 or 0.08)
-end
-
 ---@param coords vector3
 ---@param text string
 local function drawText3D(coords, text)
@@ -205,22 +187,32 @@ local function drawText3D(coords, text)
     EndTextCommandDisplayText(x, y)
 end
 
--- Stage 1: walk to the back of a vehicle and press E to attach the hook.
----@param rs RopeState
-local function tickAttachHook(rs)
-    local ped = cache.ped
-    local pedPos = GetEntityCoords(ped)
+---Closest vehicle whose rear the player is standing at (on foot), or nil.
+---@return integer|nil vehicle
+---@return vector3|nil rear
+local function vehicleAtRear()
+    if IsPedInAnyVehicle(cache.ped, false) then
+        return
+    end
+    local pedPos = GetEntityCoords(cache.ped)
     local vehicle = Bridge.GetClosestVehicle(pedPos)
     if not vehicle or vehicle == 0 or #(pedPos - GetEntityCoords(vehicle)) >= rope.vehicleAttachDistance then
         return
     end
-
-    local rear =
-        GetOffsetFromEntityInWorldCoords(vehicle, VEHICLE_REAR_OFFSET.x, VEHICLE_REAR_OFFSET.y, VEHICLE_REAR_OFFSET.z)
+    local rear = rearOf(vehicle)
     if #(pedPos - rear) >= HOOK_PROMPT_DISTANCE then
         return
     end
+    return vehicle, rear
+end
 
+---Shows the [E] prompt at a vehicle's rear; returns the vehicle when E is pressed.
+---@return integer|nil
+local function promptHookVehicle()
+    local vehicle, rear = vehicleAtRear()
+    if not vehicle or not rear then
+        return
+    end
     DrawMarker(
         2,
         rear.x,
@@ -243,65 +235,224 @@ local function tickAttachHook(rs)
         true,
         2
     )
-    drawText3D(vec3(rear.x, rear.y, rear.z + 0.55), locale('atm.attach_hook_prompt'))
-
-    if IsControlJustPressed(0, 38) then
-        FD.Atm.RequestControl(vehicle)
-        rs.vehicle = vehicle
-        if rs.handRope and DoesRopeExist(rs.handRope) then
-            DeleteRope(rs.handRope)
-        end
-        rs.handRope = nil
-        removeTowHook()
-        createTowRope(rs)
-        Bridge.Notify(locale('atm.hook_attached', rope.pullCount), 'success')
+    drawText3D(rear + vec3(0.0, 0.0, 0.55), locale('atm.attach_hook_prompt'))
+    if IsControlJustPressed(0, CONTROL_E) then
+        return vehicle
     end
 end
 
+---@param vehicle? integer
+local function syncCrewRope(vehicle)
+    TriggerServerEvent(FD.Events.Server.RopeTowSync, vehicle and FD.Atm.NetIdOf(vehicle) or nil)
+end
+
+-- Effects ------------------------------------------------------------------------
+
+---@param pos vector3
+---@param finalPull boolean
+local function pullEffects(pos, finalPull)
+    ShakeGameplayCam('SMALL_EXPLOSION_SHAKE', finalPull and 0.3 or 0.14)
+    if FD.Atm.LoadPtfx('core') then
+        FD.Atm.Burst('ent_dst_concrete_large', pos + vec3(0.0, 0.0, 0.35), finalPull and 1.2 or 0.65)
+        FD.Atm.Burst('ent_dst_elec_fire_sp', pos + vec3(0.0, 0.0, 0.65), finalPull and 0.9 or 0.45)
+    end
+end
+
+---Sparks while the ATM scrapes along the ground.
 ---@param rs RopeState
+local function dragEffects(rs)
+    local now = GetGameTimer()
+    if now < rs.nextSpark then
+        return
+    end
+    rs.nextSpark = now + SPARK_INTERVAL_MS
+
+    if GetEntitySpeed(rs.prop) < rope.sparksMinSpeed or IsEntityInAir(rs.prop) then
+        return
+    end
+    local pos = GetEntityCoords(rs.prop)
+    FD.Atm.Burst('ent_dst_elec_fire_sp', vec3(pos.x, pos.y, pos.z - 0.2), 0.35)
+end
+
+-- Stage transitions ---------------------------------------------------------------------
+
+---@param rs RopeState
+---@param vehicle integer
+local function anchorToVehicle(rs, vehicle)
+    FD.Atm.RequestControl(vehicle)
+    rs.vehicle = vehicle
+    deleteRope(rs.handRope)
+    rs.handRope = nil
+    removeTowHook()
+    rs.rope = tieRope(rs.wallAtm, topOf(rs.wallAtm), vehicle, rearOf(vehicle), rope.ropeLength)
+    rs.stage = 'anchored'
+    Bridge.Notify(locale('atm.hook_attached', rope.pullCount), 'success')
+end
+
+---@param rs RopeState
+---@param vehicle integer
+local function towWith(rs, vehicle)
+    rs.vehicle = vehicle
+    rs.stopSince = nil
+    deleteRope(rs.rope)
+    rs.rope = tieRope(rs.prop, topOf(rs.prop), vehicle, rearOf(vehicle), rope.towRopeLength)
+    rs.stage = 'towing'
+    syncCrewRope(vehicle)
+end
+
+---Replaces the static map ATM with a networked physical prop and throws it towards the vehicle.
+---@param rs RopeState
+---@return boolean ripped
 local function ripFromWall(rs)
-    FD.Atm.RequestControl(rs.atm)
-    if IsEntityAttached(rs.atm) then
-        DetachEntity(rs.atm, true, true)
+    local pos = GetEntityCoords(rs.wallAtm)
+    local rot = GetEntityRotation(rs.wallAtm, 2)
+
+    lib.requestModel(rs.model, 5000)
+    local prop = CreateObjectNoOffset(rs.model, pos.x, pos.y, pos.z, true, true, false)
+    SetModelAsNoLongerNeeded(rs.model)
+
+    local deadline = GetGameTimer() + 2000
+    while not NetworkGetEntityIsNetworked(prop) and GetGameTimer() < deadline do
+        Wait(0)
     end
-    FreezeEntityPosition(rs.atm, false)
-    SetEntityDynamic(rs.atm, true)
-    ActivatePhysics(rs.atm)
-    SetEntityCollision(rs.atm, true, true)
-    SetEntityHasGravity(rs.atm, true)
+    if not DoesEntityExist(prop) or not NetworkGetEntityIsNetworked(prop) then
+        -- usually a server with strict entity lockdown (client-created entities blocked)
+        print(('^1[%s] could not create a networked ATM prop (check sv_entityLockdown)^7'):format(FD.Resource))
+        if DoesEntityExist(prop) then
+            DeleteEntity(prop)
+        end
+        return false
+    end
 
-    local back = GetEntityForwardVector(rs.vehicle)
-    ApplyForceToEntity(rs.atm, 1, -back.x * 5.0, -back.y * 5.0, 0.8, 0, 0, 0, 0, false, true, true, false, true)
-    Wait(650)
+    FD.Atm.World.Hide(pos, rs.model)
+    SetEntityRotation(prop, rot.x, rot.y, rot.z, 2, true)
 
-    rs.detached = true
-    rs.lastRopeRepair = 0
-    createTowRope(rs)
+    local netId = NetworkGetNetworkIdFromEntity(prop)
+    SetNetworkIdCanMigrate(netId, false) -- the puller keeps simulating its physics
+    SetNetworkIdExistsOnAllMachines(netId, true)
+
+    FreezeEntityPosition(prop, false)
+    SetEntityDynamic(prop, true)
+    SetEntityHasGravity(prop, true)
+    SetEntityCollision(prop, true, true)
+    ActivatePhysics(prop)
+
+    rs.prop = prop
+    rs.netId = netId
+    FD.Atm.crewRopeNetId = netId
+    FD.Atm.used[prop] = true
+
+    towWith(rs, rs.vehicle)
+
+    -- break it off: tip it forward and throw it towards the vehicle
+    local towards = GetEntityCoords(rs.vehicle) - pos
+    local length = #towards
+    if length > 0.01 then
+        towards = towards / length
+    end
+    ApplyForceToEntityCenterOfMass(
+        prop,
+        1,
+        towards.x * rope.ripImpulse,
+        towards.y * rope.ripImpulse,
+        2.5,
+        false,
+        false,
+        true,
+        false
+    )
+
+    TriggerServerEvent(FD.Events.Server.RegisterRopeAtm, netId, pos, rs.model)
     Bridge.Notify(locale('atm.ripped'), 'success')
+    return true
 end
 
--- Stage 2: count hard pulls; the driver must slow down between pulls.
+---Waits for the ATM to stop moving, freezes it and makes it lootable for the crew.
 ---@param rs RopeState
-local function tickPulls(rs)
+local function makeLootable(rs)
+    deleteRope(rs.rope)
+    rs.rope = nil
+    rs.vehicle = nil
+    syncCrewRope(nil)
+
+    local deadline = GetGameTimer() + SETTLE_TIMEOUT_MS
+    while DoesEntityExist(rs.prop) and GetEntitySpeed(rs.prop) > SETTLE_SPEED and GetGameTimer() < deadline do
+        Wait(100)
+    end
+    if DoesEntityExist(rs.prop) then
+        FreezeEntityPosition(rs.prop, true)
+    end
+
+    rs.stage = 'lootable'
+    FD.Atm.crewRopeLootable = true
+    TriggerServerEvent(FD.Events.Server.RopeLootable, rs.netId)
+    Bridge.Notify(locale('atm.dropped'), 'success')
+end
+
+---@param rs RopeState
+---@return boolean
+local function farEnough(rs)
+    return #(GetEntityCoords(rs.prop) - rs.origin) >= rope.lootDistanceFromOrigin
+end
+
+---The vehicle is gone: the ATM stays where it is, lootable if far enough, otherwise re-hookable.
+---@param rs RopeState
+local function loseVehicle(rs)
+    if farEnough(rs) then
+        return makeLootable(rs)
+    end
+    deleteRope(rs.rope)
+    rs.rope = nil
+    rs.vehicle = nil
+    rs.stage = 'loose'
+    syncCrewRope(nil)
+    Bridge.Notify(locale('atm.vehicle_lost'), 'error')
+end
+
+-- Per-frame stage logic ---------------------------------------------------------------------
+
+---@param rs RopeState
+local function tickHand(rs)
+    local vehicle = promptHookVehicle()
+    if vehicle then
+        anchorToVehicle(rs, vehicle)
+    end
+end
+
+---Counts hard pulls; the driver must slow down between pulls.
+---@param rs RopeState
+local function tickAnchored(rs)
+    if not rs.vehicle or not DoesEntityExist(rs.vehicle) then
+        deleteRope(rs.rope)
+        rs.rope, rs.vehicle, rs.stage = nil, nil, 'hand'
+        return
+    end
+
     local speed = GetEntitySpeed(rs.vehicle)
-    local moved = #(GetEntityCoords(rs.vehicle) - (rs.lastPullAnchor or rs.origin))
+    local moved = #(GetEntityCoords(rs.vehicle) - rs.lastPullAnchor)
 
     if rs.pullReady and speed > rope.pullSpeed and moved >= rope.pullDistance then
         rs.pulls += 1
         rs.pullReady = false
         rs.pullResetSince = nil
-        pullEffects(rs, rs.pulls >= rope.pullCount)
+        local finalPull = rs.pulls >= rope.pullCount
+        pullEffects(GetEntityCoords(rs.wallAtm), finalPull)
 
-        if rs.pulls < rope.pullCount then
-            Bridge.Notify(locale('atm.pull_ok', rs.pulls, rope.pullCount), 'primary')
-        else
-            Bridge.Notify(locale('atm.pull_final', rs.pulls, rope.pullCount), 'success')
-            ripFromWall(rs)
+        if not finalPull then
+            return Bridge.Notify(locale('atm.pull_ok', rs.pulls, rope.pullCount), 'primary')
+        end
+
+        Bridge.Notify(locale('atm.pull_final', rs.pulls, rope.pullCount), 'success')
+        if not ripFromWall(rs) then
+            -- could not spawn the physical ATM: let the crew try again
+            rs.pulls = rope.pullCount - 1
+            rs.pullReady = true
+            Bridge.Notify(locale('atm.rip_failed'), 'error')
         end
         return
     end
 
-    if rs.pullReady or rs.pulls >= rope.pullCount then
+    if rs.pullReady then
         return
     end
 
@@ -318,123 +469,108 @@ local function tickPulls(rs)
     end
 end
 
+---Keeps the towed ATM with the vehicle when GTA physics lose it (fell through the road,
+---snagged on a lamp post, rope snapped).
 ---@param rs RopeState
-local function setDown(rs)
-    if IsEntityAttached(rs.atm) then
-        DetachEntity(rs.atm, true, true)
+local function watchdog(rs)
+    local now = GetGameTimer()
+    if now < rs.nextWatchdog then
+        return
     end
-    rs.towAttached = false
-    SetEntityCollision(rs.atm, true, true)
-    SetEntityHasGravity(rs.atm, true)
-    SetEntityDynamic(rs.atm, true)
+    rs.nextWatchdog = now + WATCHDOG_INTERVAL_MS
 
-    local drop = GetOffsetFromEntityInWorldCoords(rs.vehicle, DROP_OFFSET.x, DROP_OFFSET.y, DROP_OFFSET.z)
-    SetEntityCoordsNoOffset(rs.atm, drop.x, drop.y, drop.z, false, false, false)
-    PlaceObjectOnGroundProperly(rs.atm)
-    SetEntityVelocity(rs.atm, 0.0, 0.0, 0.0)
-    Wait(100)
-    PlaceObjectOnGroundProperly(rs.atm)
-    FreezeEntityPosition(rs.atm, true)
+    local pos = GetEntityCoords(rs.prop)
+    local found, groundZ = GetGroundZFor_3dCoord(pos.x, pos.y, pos.z + 3.0, false)
+    local underGround = found and pos.z < groundZ - 1.0
+    local tooFar = #(pos - GetEntityCoords(rs.vehicle)) > rope.towRopeLength + rope.rescueExtraDistance
+    local ropeGone = not rs.rope or not DoesRopeExist(rs.rope)
 
-    rs.lootable = true
-    FD.Atm.crewRopeLootable = true
-    TriggerServerEvent(FD.Events.Server.RopeLootable, FD.Atm.crewRopeNetId)
-    Bridge.Notify(locale('atm.dropped'), 'success')
+    if underGround or tooFar then
+        local behind = GetOffsetFromEntityInWorldCoords(rs.vehicle, 0.0, -(rope.towRopeLength * 0.6 + 2.0), 1.0)
+        local _, z = GetGroundZFor_3dCoord(behind.x, behind.y, behind.z + 3.0, false)
+        SetEntityCoordsNoOffset(rs.prop, behind.x, behind.y, (z ~= 0.0 and z or behind.z) + 0.6, false, false, false)
+        local velocity = GetEntityVelocity(rs.vehicle)
+        SetEntityVelocity(rs.prop, velocity.x, velocity.y, velocity.z)
+        ropeGone = true
+    end
+
+    if ropeGone then
+        towWith(rs, rs.vehicle)
+    end
 end
 
--- Stage 3: the ripped ATM is hard-attached behind the vehicle (GTA rope physics would
--- tunnel it under the road); stopping far enough away sets it down for looting.
 ---@param rs RopeState
-local function tickTow(rs)
-    if not rs.vehicle or not DoesEntityExist(rs.vehicle) or not DoesEntityExist(rs.atm) then
+local function tickTowing(rs)
+    if not DoesEntityExist(rs.prop) then
         return
     end
-
-    FD.Atm.RequestControl(rs.atm)
-    if rs.lootable then
-        return
+    if not rs.vehicle or not DoesEntityExist(rs.vehicle) or IsEntityDead(rs.vehicle) then
+        return loseVehicle(rs)
     end
 
-    if not rs.towAttached or not IsEntityAttachedToEntity(rs.atm, rs.vehicle) then
-        if IsEntityAttached(rs.atm) then
-            DetachEntity(rs.atm, true, true)
-        end
-        FreezeEntityPosition(rs.atm, false)
-        SetEntityDynamic(rs.atm, true)
-        SetEntityCollision(rs.atm, false, false)
-        SetEntityHasGravity(rs.atm, false)
-        AttachEntityToEntity(
-            rs.atm,
-            rs.vehicle,
-            0,
-            TOW_OFFSET.x,
-            TOW_OFFSET.y,
-            TOW_OFFSET.z,
-            0.0,
-            0.0,
-            0.0,
-            false,
-            false,
-            false,
-            false,
-            2,
-            true
-        )
-        rs.towAttached = true
-    end
+    dragEffects(rs)
+    watchdog(rs)
 
-    local now = GetGameTimer()
-    if not rs.rope or not DoesRopeExist(rs.rope) then
-        if now - (rs.lastRopeRepair or 0) > ROPE_REPAIR_MS then
-            rs.lastRopeRepair = now
-            createTowRope(rs)
-        end
-    else
-        RopeForceLength(rs.rope, rope.ropeLength)
-    end
-
-    if #(GetEntityCoords(rs.atm) - rs.origin) < rope.lootDistanceFromOrigin then
+    if not farEnough(rs) then
+        rs.stopSince = nil
         return
     end
 
     if GetEntitySpeed(rs.vehicle) < STOP_SPEED then
-        rs.stopSince = rs.stopSince or now
+        rs.stopSince = rs.stopSince or GetGameTimer()
+        if GetGameTimer() - rs.stopSince >= rope.stopToDropMs then
+            makeLootable(rs)
+        end
     else
         rs.stopSince = nil
     end
+end
 
-    if rs.stopSince and now - rs.stopSince >= STOP_TO_DROP_MS then
-        setDown(rs)
+---@param rs RopeState
+local function tickLoose(rs)
+    if not DoesEntityExist(rs.prop) or not FD.Atm.IsNear(rs.prop, rope.looseRehookDistance) then
+        return
+    end
+    local vehicle = promptHookVehicle()
+    if vehicle then
+        towWith(rs, vehicle)
+        Bridge.Notify(locale('atm.rehooked'), 'success')
     end
 end
 
+local TICKS = {
+    hand = tickHand,
+    anchored = tickAnchored,
+    towing = tickTowing,
+    loose = tickLoose,
+}
+
+-- Public API ------------------------------------------------------------------------
+
 FD.Atm.Rope = {}
 
+---True for the ATM this player is currently working on (wall ATM or its prop).
 ---@param entity integer
 ---@return boolean
 function FD.Atm.Rope.IsAttachedTo(entity)
-    return state ~= nil and state.atm == entity
+    return state ~= nil and (state.wallAtm == entity or state.prop == entity)
 end
 
 function FD.Atm.Rope.Cleanup()
     removeTowHook()
+    deleteRope(crewRope)
+    crewRope = nil
     if state then
-        if state.rope and DoesRopeExist(state.rope) then
-            DeleteRope(state.rope)
-        end
-        if state.handRope and DoesRopeExist(state.handRope) then
-            DeleteRope(state.handRope)
-        end
-        if state.atm and DoesEntityExist(state.atm) then
-            if IsEntityAttached(state.atm) then
-                DetachEntity(state.atm, true, true)
-            end
-            FreezeEntityPosition(state.atm, true)
+        deleteRope(state.rope)
+        deleteRope(state.handRope)
+        if state.prop and DoesEntityExist(state.prop) and NetworkHasControlOfEntity(state.prop) then
+            DeleteEntity(state.prop)
         end
     end
     state = nil
 end
 
+---Starts the rope method on a wall ATM.
 ---@param entity integer
 function FD.Atm.Rope.Start(entity)
     if state then
@@ -446,60 +582,58 @@ function FD.Atm.Rope.Start(entity)
         return Bridge.Notify(message or locale('atm.missing_rope'), 'error')
     end
 
-    if not FD.Actions.Run(locale('atm.attaching_rope'), config.atm.methodTime.rope) or not DoesEntityExist(entity) then
+    local done = FD.Actions.Run(locale('atm.attaching_rope'), config.atm.methodTime.rope)
+    if done == nil then
         return
+    end
+    if not done or not DoesEntityExist(entity) then
+        return TriggerServerEvent(FD.Events.Server.ReleaseAtmMethod)
     end
 
     TriggerServerEvent(FD.Events.Server.ConsumeAtmItem, 'rope')
-    FD.Atm.RequestControl(entity)
     local origin = GetEntityCoords(entity)
-    loadRopeTextures()
-
     state = {
-        atm = entity,
+        stage = 'hand',
+        wallAtm = entity,
+        model = GetEntityModel(entity),
         origin = origin,
         pulls = 0,
         pullReady = true,
         lastPullAnchor = origin,
-        detached = false,
-        lootable = false,
+        nextSpark = 0,
+        nextWatchdog = 0,
     }
     FD.Atm.used[entity] = true
 
     giveTowHook()
     if towHook and DoesEntityExist(towHook) then
-        state.handRope = addRope(entity, origin + vec3(0.0, 0.0, 0.5), towHook, GetEntityCoords(towHook))
+        state.handRope = tieRope(entity, topOf(entity), towHook, GetEntityCoords(towHook), rope.ropeLength)
     end
-
-    local netId = NetworkGetNetworkIdFromEntity(entity)
-    SetNetworkIdCanMigrate(netId, true)
-    FD.Atm.crewRopeNetId = netId
-    TriggerServerEvent(FD.Events.Server.RegisterRopeAtm, netId)
     Bridge.Notify(locale('atm.rope_attached'), 'success')
 end
 
 ---Loot the ripped ATM (every crew member takes a share).
 ---@param entity integer
 function FD.Atm.Rope.Loot(entity)
-    if not entity or entity == 0 then
-        return
-    end
-
-    local netId = NetworkGetNetworkIdFromEntity(entity)
-    if not FD.Atm.IsActive() or not FD.Atm.crewRopeNetId or netId ~= FD.Atm.crewRopeNetId then
+    local netId = FD.Atm.NetIdOf(entity)
+    if not FD.Atm.IsActive() or not netId or netId ~= FD.Atm.crewRopeNetId then
         return Bridge.Notify(locale('atm.not_yours'), 'error')
     end
-    if state and state.atm == entity and not state.lootable then
+    if not FD.Atm.crewRopeLootable then
         return Bridge.Notify(locale('atm.tow_further'), 'error')
     end
     if not FD.Atm.IsNear(entity, config.atm.lootDistance) then
-        return
+        return Bridge.Notify(locale('atm.too_far'), 'error')
     end
 
-    if FD.Actions.Run(locale('atm.opening_towed'), config.atm.towedLootTime) then
+    TaskTurnPedToFaceEntity(cache.ped, entity, 800)
+    Wait(800)
+    if FD.Actions.Run(locale('atm.opening_towed'), config.atm.towedLootTime, LOOT_ANIM) then
         TriggerServerEvent(FD.Events.Server.RopeLoot, netId)
     end
 end
+
+-- Events ------------------------------------------------------------------------------
 
 RegisterNetEvent(FD.Events.Client.CrewRopeAtm, function(netId)
     FD.Atm.crewRopeNetId = tonumber(netId)
@@ -512,38 +646,33 @@ RegisterNetEvent(FD.Events.Client.CrewRopeLootable, function(netId)
     end
 end)
 
-RegisterNetEvent(FD.Events.Client.DetachRopeAfterLoot, function(netId)
-    netId = tonumber(netId)
-    if FD.Atm.crewRopeNetId ~= netId or not state or not state.atm then
-        return
-    end
-    if NetworkGetNetworkIdFromEntity(state.atm) ~= netId then
-        return
-    end
-
-    if state.rope and DoesRopeExist(state.rope) then
-        DeleteRope(state.rope)
-    end
-    state.rope = nil
-
-    if DoesEntityExist(state.atm) then
-        FD.Atm.RequestControl(state.atm)
-        if IsEntityAttached(state.atm) then
-            DetachEntity(state.atm, true, true)
-        end
-        FreezeEntityPosition(state.atm, false)
-        SetEntityDynamic(state.atm, true)
-        ActivatePhysics(state.atm)
-    end
-
-    state.vehicle = nil
-    Bridge.Notify(locale('atm.rope_released'), 'success')
-end)
-
 RegisterNetEvent(FD.Events.Client.RopeAllLooted, function(netId)
     if FD.Atm.crewRopeNetId == tonumber(netId) then
         Bridge.Notify(locale('atm.all_looted'), 'success')
     end
+end)
+
+-- Another crew member is towing: mirror the rope so everyone sees what drags the ATM.
+RegisterNetEvent(FD.Events.Client.CrewRopeTow, function(vehicleNetId, atmNetId)
+    deleteRope(crewRope)
+    crewRope = nil
+    if not vehicleNetId or not atmNetId then
+        return
+    end
+
+    local deadline = GetGameTimer() + 3000
+    while
+        not (NetworkDoesNetworkIdExist(vehicleNetId) and NetworkDoesNetworkIdExist(atmNetId))
+        and GetGameTimer() < deadline
+    do
+        Wait(100)
+    end
+    if not NetworkDoesNetworkIdExist(vehicleNetId) or not NetworkDoesNetworkIdExist(atmNetId) then
+        return
+    end
+
+    local vehicle, atm = NetworkGetEntityFromNetworkId(vehicleNetId), NetworkGetEntityFromNetworkId(atmNetId)
+    crewRope = tieRope(atm, topOf(atm), vehicle, rearOf(vehicle), rope.towRopeLength)
 end)
 
 RegisterNetEvent(FD.Events.Client.LootTowedAtm, function(data)
@@ -553,15 +682,10 @@ end)
 CreateThread(function()
     while true do
         local rs = state
-        if rs and FD.Atm.IsActive() then
+        local tick = rs and FD.Atm.IsActive() and TICKS[rs.stage]
+        if tick then
             Wait(0)
-            if not rs.vehicle then
-                tickAttachHook(rs)
-            elseif not rs.detached and DoesEntityExist(rs.vehicle) then
-                tickPulls(rs)
-            elseif rs.detached then
-                tickTow(rs)
-            end
+            tick(rs)
         else
             Wait(400)
         end

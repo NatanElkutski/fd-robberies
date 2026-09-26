@@ -63,8 +63,9 @@ end)
 ---@param label? string
 ---@param duration? integer ms
 ---@param anim? { dict: string, clip: string, flag?: integer }
+---@param prop? { model: string|integer, bone?: integer, pos?: vector3, rot?: vector3 } held while the bar runs
 ---@return boolean|nil completed; nil when another action was already running
-function FD.Actions.Run(label, duration, anim)
+function FD.Actions.Run(label, duration, anim, prop)
     if busy then
         return nil
     end
@@ -74,6 +75,7 @@ function FD.Actions.Run(label, duration, anim)
         label = tostring(label or locale('actions.default')),
         duration = tonumber(duration) or 5000,
         anim = anim or DEFAULT_ANIM,
+        prop = prop,
     })
     ClearPedTasks(cache.ped)
     busy = false

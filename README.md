@@ -9,6 +9,7 @@ Exclusive QBCore robbery network by **FIVE DEV**: persistent XP and levels, crew
 - [oxmysql](https://github.com/overextended/oxmysql)
 - qb-target (or ox_target through its qb-target compatibility) — set in `config/client.lua`
 - optional: cm-notification (used automatically when running)
+- OneSync, with `sv_entityLockdown` not set to `strict` (the ATM rope method spawns a networked ATM prop from the client)
 
 ## Installation
 
