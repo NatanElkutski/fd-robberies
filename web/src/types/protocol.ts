@@ -104,6 +104,8 @@ export interface NuiMessages {
   toggleBrief: Record<string, never>;
   atmMenu: { show: boolean };
   safeInput: { storeId: number; hint: string; label: string };
+  /** floating "[E] ..." prompt at a world position projected to screen (0..1 coords) */
+  worldPrompt: { show: boolean; x?: number; y?: number; text?: string; key?: string };
 }
 
 export type NuiAction = keyof NuiMessages;

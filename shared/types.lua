@@ -20,6 +20,7 @@
 ---@field explosiveReady boolean
 ---@field ropeATM? integer              network id of the ripped (spawned) ATM prop
 ---@field ropeOwner? integer            source that ripped it (physics owner, marks it lootable)
+---@field atmBody? integer              network id of the steel body attached behind a thin ATM panel
 ---@field hiddenAtm? { coords: vector3, model: integer } map ATM hidden while the prop exists
 ---@field ropeLootable? boolean
 ---@field ropeLooted table<integer, true>

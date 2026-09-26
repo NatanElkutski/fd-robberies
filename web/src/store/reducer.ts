@@ -104,5 +104,13 @@ export function reducer(state: State, action: Action): State {
 
     case 'safeClose':
       return { ...state, safe: { ...state.safe, open: false } };
+
+    case 'worldPrompt':
+      return {
+        ...state,
+        worldPrompt: action.show
+          ? { show: true, x: action.x ?? 0.5, y: action.y ?? 0.5, text: action.text ?? '', key: action.key ?? '' }
+          : { ...state.worldPrompt, show: false },
+      };
   }
 }

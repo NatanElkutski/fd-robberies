@@ -58,4 +58,5 @@ export function useNuiSync(): void {
   useNuiEvent('toggleBrief', () => dispatch({ type: 'toggleBrief' }));
   useNuiEvent('atmMenu', (msg) => dispatch({ type: 'atmMenu', show: msg.show }));
   useNuiEvent('safeInput', (msg) => dispatch({ type: 'safeOpen', storeId: msg.storeId, hint: msg.hint, label: msg.label }));
+  useNuiEvent('worldPrompt', (msg) => dispatch({ type: 'worldPrompt', show: msg.show, x: msg.x, y: msg.y, text: msg.text, key: msg.key }));
 }

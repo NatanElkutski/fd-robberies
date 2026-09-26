@@ -33,6 +33,7 @@ FD.Events = {
         RopeLootable = server('ropeLootable'),
         RopeLoot = server('ropeLoot'),
         RopeTowSync = server('ropeTowSync'),
+        RegisterAtmBody = server('registerATMBody'),
     },
 
     -- server -> client net events (and a few local target events)

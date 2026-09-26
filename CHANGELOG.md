@@ -1,5 +1,20 @@
 # Changelog
 
+## 4.2.0 — ATM rope feel
+
+### Fixed
+- Ropes were created **rigid** (a stiff rod) with length and max length swapped — that's why the rope stood straight up / stuck into the ground. Ropes are flexible now, and their length follows the distance between the two ends (a little sag, capped at the max), so they look stretched while you walk to the car and while it pulls, and pull for real once they reach the max.
+- The "[E] attach the hook" instruction is back above the vehicle's trunk, in Hebrew: a floating NUI label with a key badge (GTA's native 3D text can't draw Hebrew).
+
+### New — the ripped ATM feels heavy
+- Thin wall ATMs get a steel body attached behind the panel once ripped out, so they have real depth.
+- Real mass (350 kg), ground friction while it scrapes the road, and a speed cap.
+- The towing car carries the load: reduced engine power and ~80 km/h top speed while dragging the ATM (applied by whichever crew member drives).
+- The crew's mirrored rope behaves the same way.
+
+### Config (config/client.lua → atm.rope)
+- Added `ropeType`, `ropeSlack`, `handRopeLength`, `atmMass`, `groundDrag`, `atmMaxSpeed`, `bodyModel`, `bodyMinPanelDepth`, `towMaxSpeed`, `towPowerMultiplier`.
+
 ## 4.1.1 — ATM rope fixes
 
 ### Fixed
