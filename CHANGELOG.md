@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.3.1
+
+### Fixed
+- The ATM snagged on the wall when ripped out: the steel body behind the panel started inside the wall. The ATM is now moved out of the wall along its face before physics start, thrown mostly away from the wall, and the body is attached only once the ATM is clear (`atm.rope.bodyAttachDistance`) — with no collision of its own.
+
+### Changed
+- The ripped ATM is half as heavy: mass 175 kg (was 350), ground drag 1.3 (was 2.6), towing car keeps 80% power (was 60%) and tops out at ~100 km/h (was ~80).
+- New config: `atm.rope.wallClearance`, `atm.rope.bodyAttachDistance`.
+
 ## 4.3.0 — tow hook and HUD polish
 
 ### Changed

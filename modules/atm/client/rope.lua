@@ -49,6 +49,7 @@ local UNCAPPED_SPEED <const> = 1000.0
 ---@field prop integer               networked ATM prop (frozen on the wall until ripped)
 ---@field netId integer
 ---@field body? integer              steel body attached behind thin ATM panels after the rip
+---@field bodyPending? boolean       body waits until the ATM is clear of the wall
 ---@field vehicle? integer
 ---@field rope? integer              rope prop ↔ vehicle
 ---@field ropeMax number             max length of `rope`
@@ -426,6 +427,9 @@ local function attachBody(rs)
         end
         return
     end
+    -- purely visual depth: it must never collide (it would snag on walls, kerbs and the car)
+    SetEntityCollision(body, false, false)
+    SetEntityNoCollisionEntity(body, rs.prop, false)
 
     local bodyMin, bodyMax = GetModelDimensions(bodyModel)
     local panelCenter = (panelMin + panelMax) / 2
@@ -550,7 +554,12 @@ end
 ---Breaks the prop off the wall: real, heavy physics from here on.
 ---@param rs RopeState
 local function ripFromWall(rs)
-    local pos = GetEntityCoords(rs.prop)
+    -- step out of the wall along the ATM's face before physics start, so no part of it is
+    -- inside the wall geometry (that's what made it snag on the wall)
+    local out = GetEntityForwardVector(rs.prop) * rs.frontSign
+    local pos = GetEntityCoords(rs.prop) + out * rope.wallClearance
+    SetEntityCoordsNoOffset(rs.prop, pos.x, pos.y, pos.z, false, false, false)
+
     FreezeEntityPosition(rs.prop, false)
     SetEntityDynamic(rs.prop, true)
     SetEntityHasGravity(rs.prop, true)
@@ -558,28 +567,19 @@ local function ripFromWall(rs)
     SetObjectPhysicsParams(rs.prop, rope.atmMass, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0)
     SetEntityMaxSpeed(rs.prop, rope.atmMaxSpeed)
     ActivatePhysics(rs.prop)
-    attachBody(rs)
+    rs.bodyPending = true -- the steel body is attached once the ATM is clear of the wall
 
     rs.stage = 'towing'
     hookTo(rs, rs.vehicle, rope.towRopeLength)
 
-    -- tip it over and throw it towards the vehicle
+    -- throw it away from the wall (mostly) and towards the vehicle, tipping it over
     local towards = GetEntityCoords(rs.vehicle) - pos
     local length = #towards
     if length > 0.01 then
         towards = towards / length
     end
-    ApplyForceToEntityCenterOfMass(
-        rs.prop,
-        1,
-        towards.x * rope.ripImpulse,
-        towards.y * rope.ripImpulse,
-        2.5,
-        false,
-        false,
-        true,
-        false
-    )
+    local push = (out * 0.6 + towards * 0.4) * rope.ripImpulse
+    ApplyForceToEntityCenterOfMass(rs.prop, 1, push.x, push.y, 2.5, false, false, true, false)
     Bridge.Notify(locale('atm.ripped'), 'success')
 end
 
@@ -707,6 +707,10 @@ local function tickTowing(rs)
     end
 
     fitRope(rs.rope, topOf(rs.prop), rearOf(rs.vehicle), rs.ropeMax)
+    if rs.bodyPending and #(GetEntityCoords(rs.prop) - rs.origin) >= rope.bodyAttachDistance then
+        rs.bodyPending = false
+        attachBody(rs)
+    end
     groundDrag(rs)
     dragEffects(rs)
     watchdog(rs)

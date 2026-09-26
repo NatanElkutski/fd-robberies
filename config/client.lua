@@ -107,13 +107,15 @@ return {
             looseRehookDistance = 12.0, -- a loose ATM (vehicle lost) can be re-hooked from this range
 
             -- Weight and feel of the ripped ATM
-            atmMass = 350.0, -- kg
-            groundDrag = 2.6, -- how quickly friction slows the ATM while it scrapes the ground (per second)
+            atmMass = 175.0, -- kg
+            groundDrag = 1.3, -- how quickly friction slows the ATM while it scrapes the ground (per second)
             atmMaxSpeed = 24.0, -- m/s cap for the ATM itself
             bodyModel = 'prop_ld_int_safe_01', -- steel body attached behind thin wall ATMs so they have depth
             bodyMinPanelDepth = 0.45, -- ATM models thinner than this (metres) get the body
-            towMaxSpeed = 22.0, -- m/s (~80 km/h) top speed of the towing vehicle
-            towPowerMultiplier = 0.6, -- engine power of the towing vehicle while it drags the ATM
+            towMaxSpeed = 28.0, -- m/s (~100 km/h) top speed of the towing vehicle
+            towPowerMultiplier = 0.8, -- engine power of the towing vehicle while it drags the ATM
+            wallClearance = 0.35, -- metres the ATM is moved out of the wall when it breaks off
+            bodyAttachDistance = 2.0, -- the steel body is attached once the ATM is this far from the wall
         },
     },
 }
